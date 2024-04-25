@@ -8,18 +8,13 @@ using DIKUArcade.Entities;
 using DIKUArcade.Graphics;
 using DIKUArcade.Math;
 
-public class BlockContainer
-{
+public class BlockContainer {
     public EntityContainer<Block> Blocks = new EntityContainer<Block>(288);
-    public void CreateBlocks(LevelData data)
-    {
-        for (int j = 0; j < 24; j++)
-        {
-            for (int i = 0; i < 12; i++)
-            {
+    public void CreateBlocks(LevelData data) {
+        for (int j = 0; j < 24; j++) {
+            for (int i = 0; i < 12; i++) {
                 char currentLetter = data.MapSection[j * 14 + i];
-                if (currentLetter != '-')
-                {
+                if (currentLetter != '-') {
                     Blocks.AddEntity(new Block(
                     new StationaryShape(new Vec2F(0.0835f * i, 0.971f - 0.0278f * j),
                     new Vec2F(0.0835f, 0.0278f)),
