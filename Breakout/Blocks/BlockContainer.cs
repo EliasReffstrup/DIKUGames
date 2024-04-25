@@ -3,6 +3,7 @@ namespace Breakout;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using Breakout.LevelLoading;
 using DIKUArcade.Entities;
 using DIKUArcade.Graphics;
 using DIKUArcade.Math;
@@ -10,13 +11,24 @@ using DIKUArcade.Math;
 public class BlockContainer
 {
     public EntityContainer<Block> Blocks = new EntityContainer<Block>(288);
-    public void CreateBlocks()
+    public void CreateBlocks(LevelData data)
     {
-        Blocks.AddEntity(new Block(
-            new StationaryShape(new Vec2F(0.5f, 0.5f), new Vec2F(0.09f, 0.03f)),
-        new Image(Path.Combine("Assets", "Images", "blue-block.png")),
-        0,
-        ""
-        ));
+        for (int j = 0; j < 24; j++)
+        {
+            for (int i = 0; i < 12; i++)
+            {
+                char currentLetter = data.MapSection[j * 14 + i];
+                if (currentLetter != '-')
+                {
+                    Blocks.AddEntity(new Block(
+                    new StationaryShape(new Vec2F(0.0835f * i, 0.971f - 0.0278f * j),
+                    new Vec2F(0.0835f, 0.0278f)),
+                new Image(Path.Combine("Assets", "Images", data.LegendDictionary[currentLetter.ToString()])),
+                0,
+                ""
+                ));
+                }
+            }
+        }
     }
 }

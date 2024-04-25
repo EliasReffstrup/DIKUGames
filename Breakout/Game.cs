@@ -15,7 +15,7 @@ public class Game : DIKUGame
     public Game(WindowArgs windowArgs) : base(windowArgs)
     {
         window.SetKeyEventHandler(KeyHandler);
-        container.CreateBlocks();
+        container.CreateBlocks(loader.ReadLevelFile("bonusstage.txt"));
     }
 
     private void KeyHandler(KeyboardAction action, KeyboardKey key)
@@ -29,7 +29,7 @@ public class Game : DIKUGame
             case KeyboardKey.Escape:
                 window.CloseWindow();
                 break;
-            
+
             case KeyboardKey.Space:
                 loader.printLevelDataToConsole(loader.ReadLevelFile("level3.txt"));
                 break;
