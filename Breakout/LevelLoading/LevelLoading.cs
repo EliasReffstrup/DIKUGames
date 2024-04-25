@@ -2,7 +2,7 @@ namespace Breakout.LevelLoading;
 using System.IO;
 
 public class LoadLevel {
-    
+
     string fileContent;
 
     string mapSection, metaSection, legendSection;
@@ -30,7 +30,7 @@ public class LoadLevel {
             mapIndex = fileContent.IndexOf("Map:");
             metaIndex = fileContent.IndexOf("Meta:");
             legendIndex = fileContent.IndexOf("Legend:");
-            
+
             mapEndIndex = fileContent.IndexOf("Map/");
             metaEndIndex = fileContent.IndexOf("Meta/");
             legendEndIndex = fileContent.IndexOf("Legend/");
@@ -41,14 +41,14 @@ public class LoadLevel {
             legendSection = fileContent.Substring(legendIndex + "Legend:".Length, legendEndIndex - (legendIndex + "Legend:".Length)).Trim();
 
             // further divide meta and legend into substrings, map can stay as is
-            
-            metaLines = metaSection.Split(new[] {"\r", "\n"}, StringSplitOptions.RemoveEmptyEntries);
-            legendLines = legendSection.Split(new[] {"\r", "\n"}, StringSplitOptions.RemoveEmptyEntries);
+
+            metaLines = metaSection.Split(new[] { "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+            legendLines = legendSection.Split(new[] { "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
 
             foreach (string line in metaLines) {
                 string[] parts = line.Split(':'); //split by delimiter :
 
-                if (parts.Length == 2){
+                if (parts.Length == 2) {
                     string descriptor = parts[0].Trim();
                     string value = parts[1].Trim();
 
@@ -63,7 +63,7 @@ public class LoadLevel {
             foreach (string line in legendLines) {
                 string[] parts = line.Split(')'); //split by delimiter :
 
-                if (parts.Length == 2){
+                if (parts.Length == 2) {
                     string legend = parts[0].Trim();
                     string asset = parts[1].Trim();
 
@@ -76,7 +76,7 @@ public class LoadLevel {
             }
 
             // add data to ADT so it can be returned
-            LevelData levelData = new LevelData{
+            LevelData levelData = new LevelData {
                 MapSection = mapSection,
                 MetaDictionary = metaDict,
                 LegendDictionary = legendDict,
@@ -92,7 +92,7 @@ public class LoadLevel {
     }
 
     public void printLevelDataToConsole(LevelData levelData) {
-        if (levelData != null) {        
+        if (levelData != null) {
             Console.WriteLine("\nPrinting Map:\n");
             Console.WriteLine(levelData.MapSection);
 
