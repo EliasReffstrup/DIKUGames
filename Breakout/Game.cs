@@ -9,11 +9,25 @@ using LevelLoading;
 public class Game : DIKUGame {
     private BlockContainer container = new BlockContainer();
     private LoadLevel loader = new LoadLevel();
+    private LevelData levelData;
+    private string levelName;
+    private string levelPath;
 
 
     public Game(WindowArgs windowArgs) : base(windowArgs) {
         window.SetKeyEventHandler(KeyHandler);
-        container.CreateBlocks(loader.ReadLevelFile("bonusstage.txt"));
+
+        levelName = "columns"; // set which level to use here
+
+        levelPath = Path.Combine("Assets", "Levels", levelName + ".txt");
+        levelData = loader.ReadLevelFile(levelPath);
+        if (levelData == null) {
+            Console.WriteLine($"Error reading level file, please read above error message. Aborting run...");
+            window.CloseWindow();
+            return;
+        }
+
+        container.CreateBlocks(levelData);
     }
 
     private void KeyHandler(KeyboardAction action, KeyboardKey key) {
@@ -26,7 +40,7 @@ public class Game : DIKUGame {
                 break;
 
             case KeyboardKey.Space:
-                loader.printLevelDataToConsole(loader.ReadLevelFile("level3.txt"));
+                loader.printLevelDataToConsole(loader.ReadLevelFile(levelPath));
                 break;
         }
     }
