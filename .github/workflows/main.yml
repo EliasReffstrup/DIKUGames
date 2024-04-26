@@ -1,0 +1,17 @@
+name: Fetch DIKUArcade Submodule
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  fetch-submodule:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository with submodules
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+        fetch-depth: 0
