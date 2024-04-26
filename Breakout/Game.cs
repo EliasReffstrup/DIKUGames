@@ -16,8 +16,7 @@ using DIKUArcade.Graphics;
 using DIKUArcade.Math;
 using DIKUArcade.Events;
 
-public class Game : DIKUGame, IGameEventProcessor
-{
+public class Game : DIKUGame, IGameEventProcessor {
     private BlockContainer container = new BlockContainer();
     private LoadLevel loader = new LoadLevel();
     private LevelData levelData;
@@ -40,6 +39,7 @@ public class Game : DIKUGame, IGameEventProcessor
             window.CloseWindow();
             return;
         }
+        container.CreateBlocks(levelData);
 
         eventBus = GalagaBus.GetBus();
         eventBus.InitializeEventBus(new List<GameEventType>
@@ -70,7 +70,7 @@ public class Game : DIKUGame, IGameEventProcessor
                 break;
         }
     }
-   private void KeyPress(KeyboardKey key) {
+    private void KeyPress(KeyboardKey key) {
         switch (key) {
             case KeyboardKey.Left:
                 GameEvent moveLeft = new GameEvent {
@@ -132,14 +132,12 @@ public class Game : DIKUGame, IGameEventProcessor
         }
     }
 
-    public override void Render()
-    {
-        container.Blocks.RenderEntities();
+    public override void Render() {
+        container.blocks.RenderEntities();
         player.Render();
     }
 
-    public override void Update()
-    {
+    public override void Update() {
         eventBus.ProcessEventsSequentially();
         player.Move();
     }
