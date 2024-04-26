@@ -33,13 +33,13 @@ public class Player : IGameEventProcessor {
         }
     }
 
-    private void SetMoveLeft(bool val) {
+    public void SetMoveLeft(bool val) {
         moveLeft = val ? -MOVEMENT_SPEED : 0.0f;
         UpdateDirection();
 
     }
 
-    private void SetMoveRight(bool val) {
+    public void SetMoveRight(bool val) {
         moveRight = val ? MOVEMENT_SPEED : 0.0f;
         UpdateDirection();
     }
