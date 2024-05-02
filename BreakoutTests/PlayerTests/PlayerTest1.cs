@@ -25,7 +25,7 @@ public class TestPlayer {
         eventBus.Subscribe(GameEventType.MovementEvent, player);
     }
 
-[Test]
+    [Test]
     public void TestPlayerStartsInHorizontalCenter()
     {
         Assert.AreEqual(0.4f, player.GetPosition().X);
@@ -77,4 +77,4 @@ public class TestPlayer {
     {
         Assert.IsTrue(player.GetPosition().Y < 0.5f);
     }
-    }
+}
