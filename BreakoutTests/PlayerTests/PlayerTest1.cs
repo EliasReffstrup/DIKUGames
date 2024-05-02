@@ -1,6 +1,5 @@
 namespace BreakoutTests;
 
-using System;
 using System.IO;
 using Breakout;
 using DIKUArcade.Entities;
@@ -8,35 +7,22 @@ using DIKUArcade.Math;
 using DIKUArcade.Graphics;
 using NUnit.Framework;
 using DIKUArcade.Events;
-using DIKUArcade.Events.Generic;
-
-using System;
-using DIKUArcade;
-using DIKUArcade.GUI;
-using DIKUArcade.Input;
-using Breakout;
-using System;
-using DIKUArcade;
-using DIKUArcade.GUI;
-using DIKUArcade.Input;
-using System.IO;
-using DIKUArcade.Entities;
-using DIKUArcade.Graphics;
-using DIKUArcade.Math;
-using DIKUArcade.Events;
+using DIKUArcade.Utilities;
 
 public class TestPlayer {
     Player player;
     GameEventBus eventBus;
+    private string workingDirectory;
 
     [SetUp]
     public void Setup() { 
-    player = new Player(
-            new DynamicShape(new Vec2F(0.4f, 0.025f), new Vec2F(0.2f, 0.025f)),
-            new Image(Path.Combine("Assets", "Images", "player.png")));
-    eventBus = GalagaBus.GetBus();
-    eventBus.Subscribe(GameEventType.MovementEvent, player);
+        workingDirectory = FileIO.GetProjectPath();
 
+        player = new Player(
+                new DynamicShape(new Vec2F(0.4f, 0.025f), new Vec2F(0.2f, 0.025f)),
+                new Image(Path.Combine(workingDirectory, "..", "Breakout", "Assets", "Images", "player.png")));
+        eventBus = GalagaBus.GetBus();
+        eventBus.Subscribe(GameEventType.MovementEvent, player);
     }
 
 [Test]

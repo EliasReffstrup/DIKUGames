@@ -61,7 +61,5 @@ public class TestBlocks {
         container.CreateBlocks(levelData, imagePath);
         Assert.IsNotNull(levelData);
 
-
-
     }
 }
