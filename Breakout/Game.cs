@@ -5,11 +5,6 @@ using DIKUArcade;
 using DIKUArcade.GUI;
 using DIKUArcade.Input;
 using LevelLoading;
-using Breakout;
-using System;
-using DIKUArcade;
-using DIKUArcade.GUI;
-using DIKUArcade.Input;
 using System.IO;
 using DIKUArcade.Entities;
 using DIKUArcade.Graphics;
@@ -30,12 +25,12 @@ public class Game : DIKUGame, IGameEventProcessor {
     public Game(WindowArgs windowArgs) : base(windowArgs) {
         window.SetKeyEventHandler(KeyHandler);
 
-        levelName = "columns"; // set which level to use here
+        levelName = "bonusstage"; // set which level to use here
 
         levelPath = Path.Combine("Assets", "Levels", levelName + ".txt");
         levelData = loader.ReadLevelFile(levelPath);
         if (levelData == null) {
-            Console.WriteLine($"Error reading level file, please read above error message. Aborting run...");
+            Console.Error.WriteLine($"Error reading level file, please read above error message. Aborting run...");
             window.CloseWindow();
             return;
         }
@@ -66,7 +61,8 @@ public class Game : DIKUGame, IGameEventProcessor {
                 break;
 
             case KeyboardKey.Space:
-                loader.printLevelDataToConsole(loader.ReadLevelFile(levelPath));
+                Console.WriteLine(levelData.ToString());
+                //loader.printLevelDataToConsole(loader.ReadLevelFile(levelPath));
                 break;
         }
     }
@@ -109,7 +105,6 @@ public class Game : DIKUGame, IGameEventProcessor {
                     Message = "STOP_MOVE_RIGHT"
                 };
                 eventBus.RegisterEvent(stopMoveRight);
-
                 break;
 
             default:
