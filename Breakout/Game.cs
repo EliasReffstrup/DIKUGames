@@ -25,7 +25,7 @@ public class Game : DIKUGame, IGameEventProcessor {
     public Game(WindowArgs windowArgs) : base(windowArgs) {
         window.SetKeyEventHandler(KeyHandler);
 
-        levelName = "bonusstage"; // set which level to use here
+        levelName = "level1"; // set which level to use here
 
         levelPath = Path.Combine("Assets", "Levels", levelName + ".txt");
         levelData = loader.ReadLevelFile(levelPath);
@@ -61,7 +61,12 @@ public class Game : DIKUGame, IGameEventProcessor {
                 break;
 
             case KeyboardKey.Space:
-                Console.WriteLine(levelData.ToString());
+                //Console.WriteLine(levelData.ToString());
+                container.blocks.Iterate(block => {
+                    block.Hit();
+                });
+
+
                 //loader.printLevelDataToConsole(loader.ReadLevelFile(levelPath));
                 break;
         }
