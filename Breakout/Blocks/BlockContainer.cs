@@ -13,15 +13,25 @@ public class BlockContainer {
     public void CreateBlocks(LevelData data) {
         for (int j = 0; j < 24; j++) {
             for (int i = 0; i < 12; i++) {
+                var type = "";
+                var name = "";
                 char currentLetter = data.MapSection[j * 14 + i];
                 if (currentLetter != '-') {
+                    if (data.MetaDictionary.ContainsKey("Hardened") && data.MetaDictionary["Hardened"] == currentLetter.ToString()) {
+                        type = "Hardened";
+                        name = data.LegendDictionary[currentLetter.ToString()].Substring(0, data.LegendDictionary[currentLetter.ToString()].Length - 4);
+                    }
+                    if (data.MetaDictionary.ContainsKey("Unbreakable") && data.MetaDictionary["Unbreakable"] == currentLetter.ToString()) {
+                        type = "Unbreakable";
+                    }
                     blocks.AddEntity(new Block(
                     new StationaryShape(new Vec2F(0.0835f * i, 0.971f - 0.0278f * j),
                     new Vec2F(0.0835f, 0.0278f)),
                 new Image(Path.Combine("Assets", "Images",
                 data.LegendDictionary[currentLetter.ToString()])),
-                0,
-                ""
+                1,
+                type,
+                name
                 ));
                 }
             }
@@ -40,7 +50,7 @@ public class BlockContainer {
                     new Vec2F(0.0835f, 0.0278f)),
                 new Image(Path.Combine(workingDirectory,
                 data.LegendDictionary[currentLetter.ToString()])),
-                0,
+                1,
                 ""
                 ));
                 }

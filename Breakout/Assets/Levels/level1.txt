@@ -29,12 +29,13 @@ Map/
 Meta:
 Name: LEVEL 1
 Time: 300
-Hardened: #
+Hardened: %
+Unbreakable: a
 PowerUp: 2
 Meta/
 
 Legend:
-%) blue-block.png
+%) darkgreen-block.png
 0) grey-block.png
 1) orange-block.png
 a) purple-block.png
