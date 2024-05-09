@@ -22,7 +22,7 @@ public class GamePaused : IGameState {
         return GamePaused.instance;
     }
 
-    public void HandleKeyEvent(KeyboardAction action, KeyboardKey key) {
+   public void HandleKeyEvent(KeyboardAction action, KeyboardKey key) {
         if (action == KeyboardAction.KeyRelease) {
             switch (key) {
                 case KeyboardKey.Down:

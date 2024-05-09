@@ -20,13 +20,19 @@ public class GameRunning : IGameState {
 
     private static GameRunning instance = null;
     private GameEventBus eventBus;
-    
-    private string levelName, levelPath;
 
     private LevelData levelData;
     private LoadLevel levelLoader = new LoadLevel();
+    
+    private string[] levels; // All levels you may want to load
+    private string activeLevel; // Current active level
+    private int activeLevelIndex = 0; // Index of the current level in the levels array
+    private string levelPath;
+    
     private BlockContainer container = new BlockContainer();
     private Player player;
+
+
 
     public static GameRunning GetInstance() {
         if (instance == null) {
@@ -66,14 +72,6 @@ public class GameRunning : IGameState {
                 };
                 eventBus.RegisterEvent(moveRight);
                 break;
-            case KeyboardKey.Escape:
-                BreakoutBus.GetBus().RegisterEvent(
-                        new GameEvent {
-                            EventType = GameEventType.GameStateEvent,
-                            Message = "CHANGE_STATE",
-                            StringArg1 = "GAME_PAUSED"
-                        });
-                break;
             default:
                 break;
         }
@@ -97,6 +95,36 @@ public class GameRunning : IGameState {
                 eventBus.RegisterEvent(stopMoveRight);
                 break;
 
+            case KeyboardKey.Escape:
+                BreakoutBus.GetBus().RegisterEvent(
+                        new GameEvent {
+                            EventType = GameEventType.GameStateEvent,
+                            Message = "CHANGE_STATE",
+                            StringArg1 = "GAME_PAUSED"
+                        });
+                break;
+
+            case KeyboardKey.Space:
+                activeLevelIndex++;
+                // Below is for looping back to level 1 instead of returning to main menu:
+                // activeLevelIndex %= levels.Length;
+
+                // Reset level index and return to main menu if no more levels
+                if(activeLevelIndex >= levels.Length) {
+                    activeLevelIndex = 0;
+                    
+                    BreakoutBus.GetBus().RegisterEvent(
+                        new GameEvent {
+                            EventType = GameEventType.GameStateEvent,
+                            Message = "CHANGE_STATE",
+                            StringArg1 = "MAIN_MENU"
+                        });
+                    
+                break;
+                }
+                ResetState(); // Reset state to load the new level
+                break;
+
             default:
                 break;
         }
@@ -111,19 +139,31 @@ public class GameRunning : IGameState {
     public void ResetState() {
         eventBus = BreakoutBus.GetBus();
         
-        levelName = "level1"; // should be changed so you can change levels dynamically.
-        levelPath = Path.Combine("Assets", "Levels", levelName + ".txt");
-        levelData = levelLoader.ReadLevelFile(levelPath);
+        levelPath = Path.Combine("Assets", "Levels");
+        levels = Directory.GetFiles(levelPath);
 
-        //if (levelData == null) {
-        //    Console.Error.WriteLine($"Error reading level file, please read above error message. Aborting run...");
-        //    GameEvent exitGame = new GameEvent {
-        //        EventType = GameEventType.WindowEvent,
-        //        Message = "CLOSE_WINDOW"
-        //    };
-        //    eventBus.RegisterEvent(exitGame);
-        //    return;
-        //}
+    
+        Console.WriteLine($"Loading file: {levels[activeLevelIndex]} ...");
+        
+
+        activeLevel = levels[activeLevelIndex];
+
+        // levelName = "level1"; // should be changed so you can change levels dynamically.
+        // levelPath = Path.Combine("Assets", "Levels", activeLevel + ".txt");
+        levelData = levelLoader.ReadLevelFile(activeLevel);
+
+        if (levelData == null) {
+            Console.Error.WriteLine($"Error reading level file, please read above error message. Aborting run...");
+            GameEvent exitGame = new GameEvent {
+                EventType = GameEventType.WindowEvent,
+                Message = "CLOSE_WINDOW"
+            };
+            eventBus.RegisterEvent(exitGame);
+            return;
+        }
+        container.blocks.Iterate(block => {
+                    block.DeleteEntity();
+        });
         container.CreateBlocks(levelData);
 
         player = new Player(
