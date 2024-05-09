@@ -44,7 +44,7 @@ public class TestBlocks {
                 0,
                 ""
                 );
-
+        Console.WriteLine(assetPath);
         Assert.IsNotNull(testBlock);
     }
 
