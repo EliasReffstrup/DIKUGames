@@ -1,0 +1,178 @@
+namespace Breakout.GameState;
+
+using System;
+using DIKUArcade;
+using DIKUArcade.GUI;
+using Breakout;
+using DIKUArcade.Input;
+using LevelLoading;
+using System.IO;
+using DIKUArcade.Entities;
+using DIKUArcade.Graphics;
+using DIKUArcade.Math;
+using DIKUArcade.Events;
+using DIKUArcade.State;
+using Breakout.GameState;
+
+
+
+public class GameRunning : IGameState {
+
+    private static GameRunning instance = null;
+    private GameEventBus eventBus;
+
+    private LevelData levelData;
+    private LoadLevel levelLoader = new LoadLevel();
+    
+    private string[] levels; // All levels you may want to load
+    private string activeLevel; // Current active level
+    private int activeLevelIndex = 0; // Index of the current level in the levels array
+    private string levelPath;
+    
+    private BlockContainer container = new BlockContainer();
+    private Player player;
+
+
+
+    public static GameRunning GetInstance() {
+        if (instance == null) {
+            GameRunning.instance = new GameRunning();
+            GameRunning.instance.ResetState();
+        }
+        return GameRunning.instance;
+    }
+
+    public void HandleKeyEvent(KeyboardAction action, KeyboardKey key) {
+        switch (action) {
+            case KeyboardAction.KeyPress:
+                KeyPress(key);
+                break;
+            case KeyboardAction.KeyRelease:
+                KeyRelease(key);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void KeyPress(KeyboardKey key) {
+        switch (key) {
+            case KeyboardKey.Left:
+                GameEvent moveLeft = new GameEvent {
+                    EventType = GameEventType.MovementEvent,
+                    Message = "MOVE_LEFT"
+                };
+                eventBus.RegisterEvent(moveLeft);
+                break;
+
+            case KeyboardKey.Right:
+                GameEvent moveRight = new GameEvent {
+                    EventType = GameEventType.MovementEvent,
+                    Message = "MOVE_RIGHT"
+                };
+                eventBus.RegisterEvent(moveRight);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void KeyRelease(KeyboardKey key) {
+        switch (key) {
+            case KeyboardKey.Left:
+                GameEvent stopMoveLeft = new GameEvent {
+                    EventType = GameEventType.MovementEvent,
+                    Message = "STOP_MOVE_LEFT"
+                };
+                eventBus.RegisterEvent(stopMoveLeft);
+                break;
+
+            case KeyboardKey.Right:
+                GameEvent stopMoveRight = new GameEvent {
+                    EventType = GameEventType.MovementEvent,
+                    Message = "STOP_MOVE_RIGHT"
+                };
+                eventBus.RegisterEvent(stopMoveRight);
+                break;
+
+            case KeyboardKey.Escape:
+                BreakoutBus.GetBus().RegisterEvent(
+                        new GameEvent {
+                            EventType = GameEventType.GameStateEvent,
+                            Message = "CHANGE_STATE",
+                            StringArg1 = "GAME_PAUSED"
+                        });
+                break;
+
+            case KeyboardKey.Space:
+                activeLevelIndex++;
+                // Below is for looping back to level 1 instead of returning to main menu:
+                // activeLevelIndex %= levels.Length;
+
+                // Reset level index and return to main menu if no more levels
+                if(activeLevelIndex >= levels.Length) {
+                    activeLevelIndex = 0;
+                    
+                    BreakoutBus.GetBus().RegisterEvent(
+                        new GameEvent {
+                            EventType = GameEventType.GameStateEvent,
+                            Message = "CHANGE_STATE",
+                            StringArg1 = "MAIN_MENU"
+                        });
+                    
+                break;
+                }
+                ResetState(); // Reset state to load the new level
+                break;
+
+            default:
+                break;
+        }
+    }
+
+
+    public void RenderState() {
+        container.blocks.RenderEntities();
+        player.Render();
+    }
+
+    public void ResetState() {
+        eventBus = BreakoutBus.GetBus();
+        
+        levelPath = Path.Combine("Assets", "Levels");
+        levels = Directory.GetFiles(levelPath);
+
+    
+        Console.WriteLine($"Loading file: {levels[activeLevelIndex]} ...");
+        
+
+        activeLevel = levels[activeLevelIndex];
+
+        // levelName = "level1"; // should be changed so you can change levels dynamically.
+        // levelPath = Path.Combine("Assets", "Levels", activeLevel + ".txt");
+        levelData = levelLoader.ReadLevelFile(activeLevel);
+
+        if (levelData == null) {
+            Console.Error.WriteLine($"Error reading level file, please read above error message. Aborting run...");
+            GameEvent exitGame = new GameEvent {
+                EventType = GameEventType.WindowEvent,
+                Message = "CLOSE_WINDOW"
+            };
+            eventBus.RegisterEvent(exitGame);
+            return;
+        }
+        container.blocks.Iterate(block => {
+                    block.DeleteEntity();
+        });
+        container.CreateBlocks(levelData);
+
+        player = new Player(
+            new DynamicShape(new Vec2F(0.4f, 0.025f), new Vec2F(0.2f, 0.025f)),
+            new Image(Path.Combine("Assets", "Images", "player.png")));
+        eventBus.Subscribe(GameEventType.MovementEvent, player);
+    }
+
+    public void UpdateState() {
+        player.Move();
+    }
+}

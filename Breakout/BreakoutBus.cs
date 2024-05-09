@@ -2,11 +2,11 @@ namespace Breakout;
 using DIKUArcade.Events;
 
 
-public static class GalagaBus {
+public static class BreakoutBus {
     private static GameEventBus eventBus;
 
     public static GameEventBus GetBus() {
-        return GalagaBus.eventBus ?? (GalagaBus.eventBus =
+        return BreakoutBus.eventBus ?? (BreakoutBus.eventBus =
                                         new GameEventBus());
     }
 }
