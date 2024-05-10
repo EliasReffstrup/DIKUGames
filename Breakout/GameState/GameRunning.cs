@@ -14,9 +14,8 @@ using DIKUArcade.Events;
 using DIKUArcade.State;
 using Breakout.GameState;
 
-
-
 public class GameRunning : IGameState {
+    private string workingDirectory = DIKUArcade.Utilities.FileIO.GetProjectPath(); // to make testing work
 
     private static GameRunning instance = null;
     private GameEventBus eventBus;
@@ -31,6 +30,7 @@ public class GameRunning : IGameState {
     
     private BlockContainer container = new BlockContainer();
     private Player player;
+
 
 
 
@@ -119,7 +119,6 @@ public class GameRunning : IGameState {
                             Message = "CHANGE_STATE",
                             StringArg1 = "MAIN_MENU"
                         });
-                    
                 break;
                 }
                 ResetState(); // Reset state to load the new level
@@ -130,6 +129,9 @@ public class GameRunning : IGameState {
         }
     }
 
+    public void ResetLevel() {
+        activeLevelIndex = 0;
+    }
 
     public void RenderState() {
         container.blocks.RenderEntities();
@@ -139,13 +141,11 @@ public class GameRunning : IGameState {
     public void ResetState() {
         eventBus = BreakoutBus.GetBus();
         
-        levelPath = Path.Combine("Assets", "Levels");
+        levelPath = Path.Combine(workingDirectory,"..", "Breakout", "Assets", "Levels");
         levels = Directory.GetFiles(levelPath);
 
-    
         Console.WriteLine($"Loading file: {levels[activeLevelIndex]} ...");
         
-
         activeLevel = levels[activeLevelIndex];
 
         // levelName = "level1"; // should be changed so you can change levels dynamically.
@@ -168,7 +168,7 @@ public class GameRunning : IGameState {
 
         player = new Player(
             new DynamicShape(new Vec2F(0.4f, 0.025f), new Vec2F(0.2f, 0.025f)),
-            new Image(Path.Combine("Assets", "Images", "player.png")));
+            new Image(Path.Combine(workingDirectory, "..", "Breakout", "Assets", "Images", "player.png")));
         eventBus.Subscribe(GameEventType.MovementEvent, player);
     }
 

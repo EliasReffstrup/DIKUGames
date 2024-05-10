@@ -47,6 +47,7 @@ public class GamePaused : IGameState {
                             StringArg1 = "MAIN_MENU",
                             StringArg2 = "RESET"
                         });
+                        
                     } else {
                         instance = null;
                         BreakoutBus.GetBus().RegisterEvent(

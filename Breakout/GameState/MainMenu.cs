@@ -9,6 +9,8 @@ using DIKUArcade.Math;
 using DIKUArcade.Events;
 
 public class MainMenu : IGameState {
+    private string workingDirectory = DIKUArcade.Utilities.FileIO.GetProjectPath(); // to make testing work
+
     private static MainMenu instance = null;
     private Entity backGroundImage;
     private Text[] menuButtons = new Text[3];
@@ -22,7 +24,7 @@ public class MainMenu : IGameState {
         }
         return MainMenu.instance;
     }
-    
+
     public void HandleKeyEvent(KeyboardAction action, KeyboardKey key) {
         if (action == KeyboardAction.KeyRelease) {
             switch (key) {
@@ -68,23 +70,9 @@ public class MainMenu : IGameState {
                                 StringArg1 = "GAME_RUNNING",
                                 StringArg2 = "RESET"
                             });
+                            
                             break;
                     }
-                    //if (activeMenuButton == 2) {
-                    //    BreakoutBus.GetBus().RegisterEvent(new GameEvent {
-                    //        EventType = GameEventType.WindowEvent,
-                    //        Message = "CLOSE_WINDOW"
-                    //    });
-                    //} else {
-                    //    instance = null;
-                    //    BreakoutBus.GetBus().RegisterEvent(
-                    //    new GameEvent {
-                    //        EventType = GameEventType.GameStateEvent,
-                    //        Message = "CHANGE_STATE",
-                    //        StringArg1 = "GAME_RUNNING",
-                    //        StringArg2 = "RESET"
-                    //    });
-                    //}
                     break;
                 case KeyboardKey.Escape:
                     BreakoutBus.GetBus().RegisterEvent(new GameEvent {
@@ -108,7 +96,7 @@ public class MainMenu : IGameState {
 
     public void ResetState() {
         backGroundImage = new Entity(new DynamicShape(new Vec2F(0.0f, 0.0f), new Vec2F(1.0f, 1.0f)),
-        new Image(Path.Combine("Assets", "Images", "shipit_titlescreen.png")));
+        new Image(Path.Combine(workingDirectory,"..", "Breakout", "Assets", "Images", "shipit_titlescreen.png")));
 
         menuButtons[0] = new("[NEW GAME]", new Vec2F(0.1f, 0.28f), new Vec2F(0.4f, 0.4f));
         menuButtons[0].SetColor(System.Drawing.Color.HotPink);

@@ -9,6 +9,8 @@ using DIKUArcade.Graphics;
 using DIKUArcade.Math;
 
 public class BlockContainer {
+    private string workingDirectory = DIKUArcade.Utilities.FileIO.GetProjectPath(); // to make testing work
+    
     public EntityContainer<Block> blocks = new EntityContainer<Block>(288);
     public void CreateBlocks(LevelData data) {
         for (int j = 0; j < 24; j++) {
@@ -27,7 +29,7 @@ public class BlockContainer {
                     blocks.AddEntity(new Block(
                     new StationaryShape(new Vec2F(0.0835f * i, 0.971f - 0.0278f * j),
                     new Vec2F(0.0835f, 0.0278f)),
-                new Image(Path.Combine("Assets", "Images",
+                new Image(Path.Combine(workingDirectory, "..", "Breakout", "Assets", "Images",
                 data.LegendDictionary[currentLetter.ToString()])),
                 1,
                 type,
