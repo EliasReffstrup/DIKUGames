@@ -21,7 +21,7 @@ public class TestPlayer {
         player = new Player(
                 new DynamicShape(new Vec2F(0.4f, 0.025f), new Vec2F(0.2f, 0.025f)),
                 new Image(Path.Combine(workingDirectory, "..", "Breakout", "Assets", "Images", "player.png")));
-        eventBus = GalagaBus.GetBus();
+        eventBus = BreakoutBus.GetBus();
         eventBus.Subscribe(GameEventType.MovementEvent, player);
     }
 

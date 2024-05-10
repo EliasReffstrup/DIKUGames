@@ -6,8 +6,10 @@ using DIKUArcade.Graphics;
 using DIKUArcade.Math;
 
 public class Block : Entity {
+    private string workingDirectory = DIKUArcade.Utilities.FileIO.GetProjectPath(); // to make testing work
+
     private Entity entity;
-    private StationaryShape shape;
+    public StationaryShape shape;
     private int health;
     private string type;
     private string name;
@@ -30,7 +32,7 @@ public class Block : Entity {
 
     public void Hit() {
         if (type == "Hardened") {
-            Image = new Image(name + "-damaged.png");
+            Image = new Image(Path.Combine(workingDirectory, "..", "Breakout", "Assets", "Images", name + "-damaged.png"));
         }
         if (type == "Unbreakable") {
             health += 1;
