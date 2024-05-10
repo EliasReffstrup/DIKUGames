@@ -29,8 +29,8 @@ public class GameRunning : IGameState {
     private int activeLevelIndex = 0; // Index of the current level in the levels array
     private string levelPath;
     
-    private BlockContainer container = new BlockContainer();
-    private Player player;
+    public BlockContainer container = new BlockContainer();
+    public Player player;
     public EntityContainer<Ball> ballsContainer = new EntityContainer<Ball>(100);
     public Ball ball;
 
@@ -125,6 +125,11 @@ public class GameRunning : IGameState {
                 ResetState(); // Reset state to load the new level
                 break;
 
+            case KeyboardKey.Enter:
+                ball.movementSwitch = true;
+        
+                break;
+                
             default:
                 break;
         }
@@ -176,6 +181,7 @@ public class GameRunning : IGameState {
         ball = new Ball(
             new DynamicShape(new Vec2F(0.5f, 0.05f), new Vec2F(0.05f, 0.05f)),
             new Image(Path.Combine("Assets", "Images", "ball.png")));
+        ballsContainer.AddEntity(ball);
         eventBus.Subscribe(GameEventType.MovementEvent, player);
     }
 
