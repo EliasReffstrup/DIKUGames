@@ -14,7 +14,8 @@ public class Block : Entity {
     private string type;
     private string name;
 
-    public Block(StationaryShape shape, Image image, int health, string type, string name = "") : base(shape, image) {
+    public Block(StationaryShape shape, Image image, int health, string type, string name = "")
+    : base(shape, image) {
         entity = new Entity(shape, image);
         this.shape = shape;
         this.health = health;
@@ -31,14 +32,14 @@ public class Block : Entity {
 
     public void Hit() {
         if (type == "Hardened") {
-            Image = new Image(Path.Combine(workingDirectory,"..", "Breakout", "Assets", "Images", name + "-damaged.png"));
+            Image = new Image(Path.Combine(workingDirectory, "..", "Breakout", "Assets", "Images", name + "-damaged.png"));
         }
         if (type == "Unbreakable") {
             health += 1;
         }
         health -= 1;
         if (health < 1) {
-            this.DeleteEntity();
+            DeleteEntity();
         }
     }
 }

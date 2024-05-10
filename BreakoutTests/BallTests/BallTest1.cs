@@ -30,17 +30,17 @@ public class BallTests {
 
     [SetUp]
     public void Setup() {
-    
-    Window.CreateOpenGLContext();
-    player = new Player(
-        new DynamicShape(new Vec2F(0.4f, 0.025f), new Vec2F(0.2f, 0.025f)),
-        new Image(Path.Combine("Assets", "Images", "player.png")));
-    ball = new Ball(
-        new DynamicShape(new Vec2F(0.5f, 0.05f), new Vec2F(0.05f, 0.05f)),
-        new Image(Path.Combine("Assets", "Images", "ball.png")));
+
+        Window.CreateOpenGLContext();
+        player = new Player(
+            new DynamicShape(new Vec2F(0.4f, 0.025f), new Vec2F(0.2f, 0.025f)),
+            new Image(Path.Combine("Assets", "Images", "player.png")));
+        ball = new Ball(
+            new DynamicShape(new Vec2F(0.5f, 0.05f), new Vec2F(0.05f, 0.05f)),
+            new Image(Path.Combine("Assets", "Images", "ball.png")));
         ballsContainer.AddEntity(ball);
     }
-    
+
 
     [Test]
     public void TestUpdateDirectionTest() {
@@ -57,10 +57,9 @@ public class BallTests {
         ball.Move();
         Assert.IsTrue(ball.entity.IsDeleted());
     }
-    
+
     [Test]
-    public void TestBallCollidesWithBlock()
-    {
+    public void TestBallCollidesWithBlock() {
         Block block = new Block(
             new StationaryShape(new Vec2F(0.5f, 0.5f), new Vec2F(0.1f, 0.1f)),
             new Image(Path.Combine("Assets", "Images", "darkgreen-block.png")),
@@ -75,22 +74,20 @@ public class BallTests {
 
         ball.Move();
         block.Hit();
-        Assert.AreEqual(0, block.health);
+        Assert.IsTrue(block.IsDeleted());
     }
 
 
 
     [Test]
-    public void TestBallLaunchesUpwards()
-    {
+    public void TestBallLaunchesUpwards() {
         ball.movementSwitch = true;
         ball.UpdateDirection();
         Assert.AreNotEqual(ball.GetPosition().Y, 0.5f);
     }
 
     [Test]
-    public void TestAllBallsMoveAtSameSpeed()
-    {
+    public void TestAllBallsMoveAtSameSpeed() {
         Ball ball1 = new Ball(
             new DynamicShape(new Vec2F(0.5f, 0.5f), new Vec2F(0.05f, 0.05f)),
             new Image(Path.Combine("Assets", "Images", "ball.png"))
@@ -106,7 +103,7 @@ public class BallTests {
         ball1.UpdateDirection();
         ball2.UpdateDirection();
 
-        Assert.AreEqual(ball1.GetPosition().X, ball2.GetPosition().X,0.001f);
-        Assert.AreEqual(ball1.GetPosition().Y, ball2.GetPosition().Y,0.001f);
-        }
+        Assert.AreEqual(ball1.GetPosition().X, ball2.GetPosition().X, 0.001f);
+        Assert.AreEqual(ball1.GetPosition().Y, ball2.GetPosition().Y, 0.001f);
+    }
 }
