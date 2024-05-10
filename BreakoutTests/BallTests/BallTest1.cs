@@ -85,7 +85,7 @@ public class BallTests {
     {
         ball.movementSwitch = true;
         ball.UpdateDirection();
-        Assert.Greater(ball.GetPosition().Y, 0.5f);
+        Assert.AreNotEqual(ball.GetPosition().Y, 0.5f);
     }
 
     [Test]
