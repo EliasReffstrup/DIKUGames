@@ -13,6 +13,7 @@ using DIKUArcade.Math;
 using DIKUArcade.Events;
 using DIKUArcade.State;
 using Breakout.GameState;
+using Breakout;
 
 public class GameRunning : IGameState {
     private string workingDirectory = DIKUArcade.Utilities.FileIO.GetProjectPath(); // to make testing work
@@ -30,9 +31,8 @@ public class GameRunning : IGameState {
     
     private BlockContainer container = new BlockContainer();
     private Player player;
-
-
-
+    public EntityContainer<Ball> ballsContainer = new EntityContainer<Ball>(100);
+    public Ball ball;
 
     public static GameRunning GetInstance() {
         if (instance == null) {
@@ -105,6 +105,7 @@ public class GameRunning : IGameState {
                 break;
 
             case KeyboardKey.Space:
+                ball.movementSwitch = true;
                 activeLevelIndex++;
                 // Below is for looping back to level 1 instead of returning to main menu:
                 // activeLevelIndex %= levels.Length;
@@ -134,8 +135,11 @@ public class GameRunning : IGameState {
     }
 
     public void RenderState() {
+        container.blocks.Iterate(block => {});
+        ballsContainer.Iterate(ball => {});
         container.blocks.RenderEntities();
         player.Render();
+        ball.Render();
     }
 
     public void ResetState() {
@@ -169,10 +173,17 @@ public class GameRunning : IGameState {
         player = new Player(
             new DynamicShape(new Vec2F(0.4f, 0.025f), new Vec2F(0.2f, 0.025f)),
             new Image(Path.Combine(workingDirectory, "..", "Breakout", "Assets", "Images", "player.png")));
+        ball = new Ball(
+            new DynamicShape(new Vec2F(0.5f, 0.05f), new Vec2F(0.05f, 0.05f)),
+            new Image(Path.Combine("Assets", "Images", "ball.png")));
         eventBus.Subscribe(GameEventType.MovementEvent, player);
     }
 
     public void UpdateState() {
+        eventBus.ProcessEventsSequentially();
         player.Move();
+        ball.Move();     
+        ball.UpdateDirection();
+        CollisionHandler.HandleCollisions(container.blocks, ballsContainer, player);
     }
 }

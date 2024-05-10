@@ -6,18 +6,18 @@ using DIKUArcade.Math;
 
 public class Player : IGameEventProcessor {
     private Entity entity;
-    private DynamicShape shape;
     private float moveLeft = 0.0f;
     private float moveRight = 0.0f;
     public const float MOVEMENT_SPEED = 0.01f;
-
+    private DynamicShape dynamicShape;
     public Player(DynamicShape shape, IBaseImage image) {
         entity = new Entity(shape, image);
-        this.shape = shape;
+        dynamicShape = shape;
     }
 
+
     private void UpdateDirection() {
-        shape.Direction.X = moveLeft + moveRight;
+        shape().Direction.X = moveLeft + moveRight;
     }
 
     public void Render() {
@@ -25,11 +25,11 @@ public class Player : IGameEventProcessor {
     }
 
     public void Move() {
-        shape.Move();
-        if (shape.Position.X < 0.0f) {
-            shape.Position.X = 0.0f;
-        } else if (shape.Position.X > 0.8f) {
-            shape.Position.X = 0.8f;
+        shape().Move();
+        if (shape().Position.X < 0.0f) {
+            shape().Position.X = 0.0f;
+        } else if (shape().Position.X > 0.8f) {
+            shape().Position.X = 0.8f;
         }
     }
 
@@ -44,7 +44,9 @@ public class Player : IGameEventProcessor {
         UpdateDirection();
     }
 
-    public Vec2F GetPosition() => shape.Position;
+    public Vec2F GetPosition() => shape().Position;
+
+    public DynamicShape shape() => dynamicShape;
 
     public void ProcessEvent(GameEvent gameEvent) {
 
