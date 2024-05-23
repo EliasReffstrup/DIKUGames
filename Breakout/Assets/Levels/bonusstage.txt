@@ -26,6 +26,7 @@ X----------X
 Map/
 
 Meta:
+PowerUp: X
 Name: Central Mass
 Meta/
 

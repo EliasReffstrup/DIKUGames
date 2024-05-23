@@ -15,7 +15,8 @@ using DIKUArcade.State;
 using Breakout.GameState;
 using Breakout;
 
-public class GameRunning : IGameState {
+public class GameRunning : IGameState
+{
     private string workingDirectory = DIKUArcade.Utilities.FileIO.GetProjectPath(); // to make testing work
 
     private static GameRunning instance = null;
@@ -23,27 +24,32 @@ public class GameRunning : IGameState {
 
     private LevelData levelData;
     private LoadLevel levelLoader = new LoadLevel();
-    
+
     private string[] levels; // All levels you may want to load
     private string activeLevel; // Current active level
     private int activeLevelIndex = 0; // Index of the current level in the levels array
     private string levelPath;
-    
+
     public BlockContainer container = new BlockContainer();
     public Player player;
     public EntityContainer<Ball> ballsContainer = new EntityContainer<Ball>(100);
     public Ball ball;
+    public TokenContainer tokenContainer = new TokenContainer();
 
-    public static GameRunning GetInstance() {
-        if (instance == null) {
+    public static GameRunning GetInstance()
+    {
+        if (instance == null)
+        {
             GameRunning.instance = new GameRunning();
             GameRunning.instance.ResetState();
         }
         return GameRunning.instance;
     }
 
-    public void HandleKeyEvent(KeyboardAction action, KeyboardKey key) {
-        switch (action) {
+    public void HandleKeyEvent(KeyboardAction action, KeyboardKey key)
+    {
+        switch (action)
+        {
             case KeyboardAction.KeyPress:
                 KeyPress(key);
                 break;
@@ -55,10 +61,13 @@ public class GameRunning : IGameState {
         }
     }
 
-    private void KeyPress(KeyboardKey key) {
-        switch (key) {
+    private void KeyPress(KeyboardKey key)
+    {
+        switch (key)
+        {
             case KeyboardKey.Left:
-                GameEvent moveLeft = new GameEvent {
+                GameEvent moveLeft = new GameEvent
+                {
                     EventType = GameEventType.MovementEvent,
                     Message = "MOVE_LEFT"
                 };
@@ -66,7 +75,8 @@ public class GameRunning : IGameState {
                 break;
 
             case KeyboardKey.Right:
-                GameEvent moveRight = new GameEvent {
+                GameEvent moveRight = new GameEvent
+                {
                     EventType = GameEventType.MovementEvent,
                     Message = "MOVE_RIGHT"
                 };
@@ -77,10 +87,13 @@ public class GameRunning : IGameState {
         }
     }
 
-    private void KeyRelease(KeyboardKey key) {
-        switch (key) {
+    private void KeyRelease(KeyboardKey key)
+    {
+        switch (key)
+        {
             case KeyboardKey.Left:
-                GameEvent stopMoveLeft = new GameEvent {
+                GameEvent stopMoveLeft = new GameEvent
+                {
                     EventType = GameEventType.MovementEvent,
                     Message = "STOP_MOVE_LEFT"
                 };
@@ -88,7 +101,8 @@ public class GameRunning : IGameState {
                 break;
 
             case KeyboardKey.Right:
-                GameEvent stopMoveRight = new GameEvent {
+                GameEvent stopMoveRight = new GameEvent
+                {
                     EventType = GameEventType.MovementEvent,
                     Message = "STOP_MOVE_RIGHT"
                 };
@@ -97,7 +111,8 @@ public class GameRunning : IGameState {
 
             case KeyboardKey.Escape:
                 BreakoutBus.GetBus().RegisterEvent(
-                        new GameEvent {
+                        new GameEvent
+                        {
                             EventType = GameEventType.GameStateEvent,
                             Message = "CHANGE_STATE",
                             StringArg1 = "GAME_PAUSED"
@@ -111,67 +126,76 @@ public class GameRunning : IGameState {
                 // activeLevelIndex %= levels.Length;
 
                 // Reset level index and return to main menu if no more levels
-                if(activeLevelIndex >= levels.Length) {
+                if (activeLevelIndex >= levels.Length)
+                {
                     activeLevelIndex = 0;
-                    
+
                     BreakoutBus.GetBus().RegisterEvent(
-                        new GameEvent {
+                        new GameEvent
+                        {
                             EventType = GameEventType.GameStateEvent,
                             Message = "CHANGE_STATE",
                             StringArg1 = "MAIN_MENU"
                         });
-                break;
+                    break;
                 }
                 ResetState(); // Reset state to load the new level
                 break;
 
             case KeyboardKey.Enter:
                 ball.movementSwitch = true;
-        
+
                 break;
-                
+
             default:
                 break;
         }
     }
 
-    public void ResetLevel() {
+    public void ResetLevel()
+    {
         activeLevelIndex = 0;
     }
 
-    public void RenderState() {
-        container.blocks.Iterate(block => {});
-        ballsContainer.Iterate(ball => {});
+    public void RenderState()
+    {
+        container.blocks.Iterate(block => { });
+        ballsContainer.Iterate(ball => { });
         container.blocks.RenderEntities();
+        tokenContainer.tokens.RenderEntities();
         player.Render();
         ball.Render();
     }
 
-    public void ResetState() {
+    public void ResetState()
+    {
         eventBus = BreakoutBus.GetBus();
-        
-        levelPath = Path.Combine(workingDirectory,"..", "Breakout", "Assets", "Levels");
+
+        levelPath = Path.Combine(workingDirectory, "..", "Breakout", "Assets", "Levels");
         levels = Directory.GetFiles(levelPath);
 
         Console.WriteLine($"Loading file: {levels[activeLevelIndex]} ...");
-        
+
         activeLevel = levels[activeLevelIndex];
 
         // levelName = "level1"; // should be changed so you can change levels dynamically.
         // levelPath = Path.Combine("Assets", "Levels", activeLevel + ".txt");
         levelData = levelLoader.ReadLevelFile(activeLevel);
 
-        if (levelData == null) {
+        if (levelData == null)
+        {
             Console.Error.WriteLine($"Error reading level file, please read above error message. Aborting run...");
-            GameEvent exitGame = new GameEvent {
+            GameEvent exitGame = new GameEvent
+            {
                 EventType = GameEventType.WindowEvent,
                 Message = "CLOSE_WINDOW"
             };
             eventBus.RegisterEvent(exitGame);
             return;
         }
-        container.blocks.Iterate(block => {
-                    block.DeleteEntity();
+        container.blocks.Iterate(block =>
+        {
+            block.DeleteEntity();
         });
         container.CreateBlocks(levelData);
 
@@ -183,13 +207,23 @@ public class GameRunning : IGameState {
             new Image(Path.Combine("Assets", "Images", "ball.png")));
         ballsContainer.AddEntity(ball);
         eventBus.Subscribe(GameEventType.MovementEvent, player);
+        eventBus.Subscribe(GameEventType.StatusEvent, tokenContainer);
     }
 
-    public void UpdateState() {
+    public void UpdateState()
+    {
         eventBus.ProcessEventsSequentially();
         player.Move();
-        ball.Move();     
+        ball.Move();
         ball.UpdateDirection();
-        CollisionHandler.HandleCollisions(container.blocks, ballsContainer, player);
+        tokenContainer.tokens.Iterate(token =>
+        {
+            token.Move();
+            if (token.Position.Y < 0.0f)
+            {
+                token.DeleteEntity();
+            }
+        });
+        CollisionHandler.HandleCollisions(container.blocks, ballsContainer, player, tokenContainer.tokens);
     }
 }

@@ -31,7 +31,7 @@ Name: LEVEL 1
 Time: 300
 Hardened: %
 Unbreakable: a
-PowerUp: 2
+PowerUp: 1
 Meta/
 
 Legend:

@@ -10,43 +10,53 @@ using System;
 using DIKUArcade.Entities;
 namespace Breakout;
 
-    public static class CollisionHandler
+public static class CollisionHandler
+{
+    public static void HandleCollisions(EntityContainer<Block> blocksContainer, EntityContainer<Ball> ballsContainer, Player player, EntityContainer<Token> tokenContainer)
     {
-        public static void HandleCollisions(EntityContainer<Block> blocksContainer, EntityContainer<Ball> ballsContainer, Player player)
+        foreach (Block block in blocksContainer)
         {
-            foreach (Block block in blocksContainer)
+            foreach (Ball ball in ballsContainer)
             {
-                foreach (Ball ball in ballsContainer)
+                if (CollisionDetection.Aabb(ball.shape, block.shape).Collision)
                 {
-                    if (CollisionDetection.Aabb(ball.shape, block.shape).Collision)
+                    block.Hit();
+                    if (CollisionDetection.Aabb(ball.shape, block.shape).CollisionDir == CollisionDirection.CollisionDirUp ||
+                        CollisionDetection.Aabb(ball.shape, block.shape).CollisionDir == CollisionDirection.CollisionDirDown ||
+                        CollisionDetection.Aabb(ball.shape, block.shape).CollisionDir == CollisionDirection.CollisionDirDown)
                     {
-                        block.Hit();
-                        if (CollisionDetection.Aabb(ball.shape, block.shape).CollisionDir == CollisionDirection.CollisionDirUp ||
-                            CollisionDetection.Aabb(ball.shape, block.shape).CollisionDir == CollisionDirection.CollisionDirDown ||
-                            CollisionDetection.Aabb(ball.shape, block.shape).CollisionDir == CollisionDirection.CollisionDirDown)
-                        {
-                            ball.ReverseYDirection();
-                        }
-                        else
-                        {
-                            ball.ReverseXDirection();
-                        }
+                        ball.ReverseYDirection();
                     }
-
-                    if (CollisionDetection.Aabb(ball.shape, player.shape()).Collision)
+                    else
                     {
-                        if (CollisionDetection.Aabb(ball.shape, player.shape()).CollisionDir == CollisionDirection.CollisionDirRight ||
-                            CollisionDetection.Aabb(ball.shape, player.shape()).CollisionDir == CollisionDirection.CollisionDirLeft)
-                        {
-                            ball.ReverseXDirection();
-                            ball.ReverseYDirection();
-                        }
-                        else
-                        {
-                            ball.BounceFromPlayer(player);
-                        }
+                        ball.ReverseXDirection();
+                    }
+                }
+
+                if (CollisionDetection.Aabb(ball.shape, player.shape()).Collision)
+                {
+                    if (CollisionDetection.Aabb(ball.shape, player.shape()).CollisionDir == CollisionDirection.CollisionDirRight ||
+                        CollisionDetection.Aabb(ball.shape, player.shape()).CollisionDir == CollisionDirection.CollisionDirLeft)
+                    {
+                        ball.ReverseXDirection();
+                        ball.ReverseYDirection();
+                    }
+                    else
+                    {
+                        ball.BounceFromPlayer(player);
                     }
                 }
             }
         }
+        foreach (Token token in tokenContainer)
+        {
+            if (CollisionDetection.Aabb(token.shape, player.shape()).Collision)
+            {
+                player.PowerUp(token.name);
+                token.DeleteEntity();
+            }
+
+        }
     }
+}
+
