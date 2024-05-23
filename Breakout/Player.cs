@@ -18,6 +18,7 @@ public class Player : IGameEventProcessor
         dynamicShape = shape;
     }
     private int[] counters = new int[3];
+    public bool Fire = false;
 
     private void UpdateDirection()
     {
@@ -61,6 +62,14 @@ public class Player : IGameEventProcessor
                 if (counters[1] == 0)
                 {
                     speedMod = 1.0f;
+                }
+            }
+            if (counters[2] > 0)
+            {
+                counters[2]--;
+                if (counters[2] == 0)
+                {
+                    Fire = false;
                 }
             }
         }
@@ -118,6 +127,10 @@ public class Player : IGameEventProcessor
             case "Slow":
                 speedMod = 0.7f;
                 counters[1] = 200;
+                break;
+            case "Fire":
+                Fire = true;
+                counters[2] = 120;
                 break;
         }
 

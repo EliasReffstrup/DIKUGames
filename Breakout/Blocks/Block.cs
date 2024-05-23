@@ -12,7 +12,7 @@ public class Block : Entity
 
     private Entity entity;
     public StationaryShape shape;
-    private int health;
+    public int health;
     private string type;
     private string name;
     private string powerup = "";

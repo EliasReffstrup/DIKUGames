@@ -14,7 +14,7 @@ public class BlockContainer
 
     public EntityContainer<Block> blocks = new EntityContainer<Block>(288);
     private Random rand = new Random();
-    private string[] powerTypes = { "Wide", "Slim", "Speed", "Slow" };
+    private string[] powerTypes = { "Wide", "Slim", "Speed", "Slow", "Fire" };
     public void CreateBlocks(LevelData data)
     {
         for (int j = 0; j < 24; j++)

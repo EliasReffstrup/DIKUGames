@@ -19,7 +19,8 @@ public class TokenContainer : IGameEventProcessor
                                                                    { "Wide", "WidePowerUp.png" },
                                                                    { "Slim", "SlimJim.png" },
                                                                    { "Speed", "SpeedPickUp.png"},
-                                                                   { "Slow", "Slowness.png"} };
+                                                                   { "Slow", "Slowness.png"},
+                                                                   {"Fire", "DamagePickUp.png"} };
     public void CreateToken(Vec2F pos, string name)
     {
         tokens.AddEntity(new Token(

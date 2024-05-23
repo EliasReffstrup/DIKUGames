@@ -20,17 +20,22 @@ public static class CollisionHandler
             {
                 if (CollisionDetection.Aabb(ball.shape, block.shape).Collision)
                 {
+
+                    if (!player.Fire || block.health != 1)
+                    {
+                        if (CollisionDetection.Aabb(ball.shape, block.shape).CollisionDir == CollisionDirection.CollisionDirUp ||
+                                                CollisionDetection.Aabb(ball.shape, block.shape).CollisionDir == CollisionDirection.CollisionDirDown ||
+                                                CollisionDetection.Aabb(ball.shape, block.shape).CollisionDir == CollisionDirection.CollisionDirDown)
+                        {
+                            ball.ReverseYDirection();
+                        }
+                        else
+                        {
+                            ball.ReverseXDirection();
+                        }
+                    }
                     block.Hit();
-                    if (CollisionDetection.Aabb(ball.shape, block.shape).CollisionDir == CollisionDirection.CollisionDirUp ||
-                        CollisionDetection.Aabb(ball.shape, block.shape).CollisionDir == CollisionDirection.CollisionDirDown ||
-                        CollisionDetection.Aabb(ball.shape, block.shape).CollisionDir == CollisionDirection.CollisionDirDown)
-                    {
-                        ball.ReverseYDirection();
-                    }
-                    else
-                    {
-                        ball.ReverseXDirection();
-                    }
+
                 }
 
                 if (CollisionDetection.Aabb(ball.shape, player.shape()).Collision)

@@ -68,12 +68,12 @@ public class Ball : Entity
             entity.DeleteEntity();
         }
 
-        if (shape.Position.X > 0.95f || shape.Position.X < 0.05f)
+        if (shape.Position.X > 0.95f || shape.Position.X < 0.00f)
         {
             ReverseXDirection();
         }
 
-        if (shape.Position.Y > 1.0f)
+        if (shape.Position.Y > 0.95f)
         {
             ReverseYDirection();
         }
