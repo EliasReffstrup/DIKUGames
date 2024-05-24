@@ -37,7 +37,7 @@ public class Ball : Entity
 
     public void Render()
     {
-        entity.RenderEntity();
+        RenderEntity();
     }
 
     public void ReverseXDirection()
@@ -65,7 +65,7 @@ public class Ball : Entity
 
         if (shape.Position.Y < 0.0)
         {
-            entity.DeleteEntity();
+            DeleteEntity();
         }
 
         if (shape.Position.X > 0.95f || shape.Position.X < 0.00f)

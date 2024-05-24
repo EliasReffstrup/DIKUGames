@@ -12,6 +12,8 @@ public class Player : IGameEventProcessor
     public const float MOVEMENT_SPEED = 0.013f;
     private float speedMod = 1.0f;
     private DynamicShape dynamicShape;
+    private int lives = 1;
+
     public Player(DynamicShape shape, IBaseImage image)
     {
         entity = new Entity(shape, image);
@@ -164,4 +166,11 @@ public class Player : IGameEventProcessor
             }
         }
     }
+
+    public int Lives
+    {
+        get { return lives; }
+        set { lives = value; }
+    }
+
 }

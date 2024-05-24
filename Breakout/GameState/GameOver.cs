@@ -1,3 +1,4 @@
+
 namespace Breakout.GameState;
 
 using System;
@@ -15,11 +16,11 @@ using DIKUArcade.State;
 using Breakout.GameState;
 using Breakout;
 
-public class GameRunning : IGameState
+public class GameOver : IGameState
 {
     private string workingDirectory = DIKUArcade.Utilities.FileIO.GetProjectPath(); // to make testing work
 
-    private static GameRunning instance = null;
+    private static GameOver instance = null;
     private GameEventBus eventBus;
 
     private LevelData levelData;
@@ -39,14 +40,14 @@ public class GameRunning : IGameState
     public Text text;
     public Vec2F livesTextPosition1 = new Vec2F(0.3f, 0.5f);
     public Vec2F livesTextPosition2 = new Vec2F(0.9f, 0.5f);
-    public static GameRunning GetInstance()
+    public static GameOver GetInstance()
     {
         if (instance == null)
         {
-            GameRunning.instance = new GameRunning();
-            GameRunning.instance.ResetState();
+            GameOver.instance = new GameOver();
+            GameOver.instance.ResetState();
         }
-        return GameRunning.instance;
+        return GameOver.instance;
     }
 
     public void HandleKeyEvent(KeyboardAction action, KeyboardKey key)
@@ -129,19 +130,7 @@ public class GameRunning : IGameState
                 // activeLevelIndex %= levels.Length;
 
                 // Reset level index and return to main menu if no more levels
-                if (activeLevelIndex >= levels.Length)
-                {
-                    activeLevelIndex = 0;
-
-                    BreakoutBus.GetBus().RegisterEvent(
-                        new GameEvent
-                        {
-                            EventType = GameEventType.GameStateEvent,
-                            Message = "CHANGE_STATE",
-                            StringArg1 = "MAIN_MENU"
-                        });
-                    break;
-                }
+            
                 ResetState(); // Reset state to load the new level
                 break;
 
@@ -236,22 +225,11 @@ public class GameRunning : IGameState
         ball.UpdateDirection();
         }
         ballsContainer.Iterate(ball => {});
-        
-        if (ballsContainer.CountEntities() == 0 && player.Lives != 0) { 
+        if (ballsContainer.CountEntities() == 0) { 
             player.Lives -=1 ; 
-        }
-        if (player.Lives == 0) {
-            BreakoutBus.GetBus().RegisterEvent(
-            new GameEvent
-            {
-                EventType = GameEventType.GameStateEvent,
-                Message = "CHANGE_STATE",
-                StringArg1 = "GAME_OVER"
-            });
-        }
-
+            }
         text.SetText($"Lives: {player.Lives}");
-        /*Console.WriteLine(player.Lives);*/
+
 
         foreach (Ball ball in ballsContainer) {
         Console.WriteLine(ball.IsDeleted());
