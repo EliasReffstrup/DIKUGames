@@ -66,7 +66,6 @@ public class Ball : Entity
         if (shape.Position.Y < 0.0)
         {
             DeleteEntity();
-            Delete
         }
 
         if (shape.Position.X > 0.95f || shape.Position.X < 0.00f)
