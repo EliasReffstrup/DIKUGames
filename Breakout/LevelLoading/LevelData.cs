@@ -10,6 +10,15 @@ public class LevelData {
     public Dictionary<string, string> LegendDictionary {
         get; set;
     }
+    public string GetLevelTime()
+    {
+        if (MetaDictionary.TryGetValue("Time", out var timeValue))
+        {
+            return timeValue;
+        }
+        return null;
+        
+    }
 
     public override string ToString() {
         if (this != null) {

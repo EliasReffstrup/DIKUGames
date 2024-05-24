@@ -36,9 +36,17 @@ public class GameRunning : IGameState
     public EntityContainer<Ball> ballsContainer = new EntityContainer<Ball>(100);
     public Ball ball;
     public TokenContainer tokenContainer = new TokenContainer();
-    public Text text;
-    public Vec2F livesTextPosition1 = new Vec2F(0.3f, 0.5f);
+    public Text livesAndTimeText;
+    public Text timeLeftText;
+    public Vec2F livesTextPosition1 = new Vec2F(0.1f, 0.5f);
     public Vec2F livesTextPosition2 = new Vec2F(0.9f, 0.5f);
+    public Vec2F timeLeftTextPosition1 = new Vec2F(0.5f, 0.5f);
+    public Vec2F timeLeftTextPosition2 = new Vec2F(0.4f, 0.5f);
+
+    public long initialTime;
+    public long timeElapsed;
+    public bool levelTimeExists;
+    public long timeLeft;
     public static GameRunning GetInstance()
     {
         if (instance == null)
@@ -170,8 +178,8 @@ public class GameRunning : IGameState
         foreach (Ball ball in ballsContainer) {
         ball.Render();
         }
-        
-        text.RenderText();
+
+        livesAndTimeText.RenderText();
     }
 
 
@@ -220,10 +228,16 @@ public class GameRunning : IGameState
         ballsContainer.AddEntity(ball);
         eventBus.Subscribe(GameEventType.MovementEvent, player);
         eventBus.Subscribe(GameEventType.StatusEvent, tokenContainer);
-        text = new Text("Lives:", livesTextPosition1, livesTextPosition2);
-        text . SetColor(new Vec4F(1.0f, 1.0f, 1.0f, 1.0f));
-        text.RenderText();
-        
+
+        livesAndTimeText = new Text("Lives:", livesTextPosition1, livesTextPosition2);
+        timeLeftText = new Text("Time Left:", timeLeftTextPosition1, timeLeftTextPosition2);
+        livesAndTimeText.SetColor(new Vec4F(1.0f, 1.0f, 1.0f, 1.0f));
+        livesAndTimeText.ScaleText(0.5f);
+        livesAndTimeText.RenderText();
+
+        string timeLeft = levelData.GetLevelTime();
+        levelTimeExists = timeLeft != null ? true : false;
+        initialTime = DIKUArcade.Timers.StaticTimer.GetElapsedMilliseconds(); 
     }
 
     public void UpdateState()
@@ -250,13 +264,19 @@ public class GameRunning : IGameState
             });
         }
 
-        text.SetText($"Lives: {player.Lives}");
-        /*Console.WriteLine(player.Lives);*/
 
-        foreach (Ball ball in ballsContainer) {
-        Console.WriteLine(ball.IsDeleted());
+        if (levelTimeExists) {
+            livesAndTimeText.SetFontSize(10);
+            livesAndTimeText.SetText($"Lives: {player.Lives}  Time Left: {timeLeft - timeElapsed}");
+        } else {
+            livesAndTimeText.SetFontSize(10);
+            livesAndTimeText.SetText($"Lives: {player.Lives}");
+            
         }
-        
+
+        timeElapsed = (DIKUArcade.Timers.StaticTimer.GetElapsedMilliseconds() - initialTime) / 1000; 
+        Console.WriteLine(timeElapsed);
+
         tokenContainer.tokens.Iterate(token =>
         {
             token.Move();
