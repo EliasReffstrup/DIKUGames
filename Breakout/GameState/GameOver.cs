@@ -16,30 +16,21 @@ using DIKUArcade.State;
 using Breakout.GameState;
 using Breakout;
 
+/// <summary>Class for the StateMachine for when the game is over.</summary>
+
 public class GameOver : IGameState
 {
     private string workingDirectory = DIKUArcade.Utilities.FileIO.GetProjectPath(); // to make testing work
 
     private static GameOver instance = null;
-    private GameEventBus eventBus;
+    private Entity backGroundImage;
+    private Text[] menuButtons = new Text[3];
+    private int activeMenuButton = 0;
+    private int maxMenuButtons = 3;
+    public Text GameOverText;
+    public Vec2F GameOverTextPosition1 = new Vec2F(0.2f, 0.5f);
+    public Vec2F GameOverTextPosition2 = new Vec2F(0.8f, 0.5f);
 
-    private LevelData levelData;
-    private LoadLevel levelLoader = new LoadLevel();
-
-    private string[] levels; // All levels you may want to load
-    private string activeLevel; // Current active level
-    private int activeLevelIndex = 0; // Index of the current level in the levels array
-    private string levelPath;
-
-
-    public BlockContainer container = new BlockContainer();
-    public Player player;
-    public EntityContainer<Ball> ballsContainer = new EntityContainer<Ball>(100);
-    public Ball ball;
-    public TokenContainer tokenContainer = new TokenContainer();
-    public Text text;
-    public Vec2F livesTextPosition1 = new Vec2F(0.3f, 0.5f);
-    public Vec2F livesTextPosition2 = new Vec2F(0.9f, 0.5f);
     public static GameOver GetInstance()
     {
         if (instance == null)
@@ -52,197 +43,100 @@ public class GameOver : IGameState
 
     public void HandleKeyEvent(KeyboardAction action, KeyboardKey key)
     {
-        switch (action)
+        if (action == KeyboardAction.KeyRelease)
         {
-            case KeyboardAction.KeyPress:
-                KeyPress(key);
-                break;
-            case KeyboardAction.KeyRelease:
-                KeyRelease(key);
-                break;
-            default:
-                break;
+            switch (key)
+            {
+                case KeyboardKey.Down:
+                    menuButtons[activeMenuButton].SetColor(System.Drawing.Color.White);
+                    activeMenuButton++;
+                    if (activeMenuButton >= maxMenuButtons)
+                        activeMenuButton = 0;
+                    menuButtons[activeMenuButton].SetColor(System.Drawing.Color.HotPink);
+                    break;
+                case KeyboardKey.Up:
+                    menuButtons[activeMenuButton].SetColor(System.Drawing.Color.White);
+                    activeMenuButton--;
+                    if (activeMenuButton < 0)
+                        activeMenuButton = maxMenuButtons - 1;
+                    menuButtons[activeMenuButton].SetColor(System.Drawing.Color.HotPink);
+                    break;
+                case KeyboardKey.Enter:
+                    switch (activeMenuButton)
+                    {
+                        case 0:
+                            BreakoutBus.GetBus().RegisterEvent(new GameEvent
+                            {
+                                EventType = GameEventType.GameStateEvent,
+                                Message = "CHANGE_STATE",
+                                StringArg1 = "GAME_RUNNING",
+                                StringArg2 = "RESET"
+                            });
+                            GameRunning.GetInstance().ResetLevel();
+                            break;
+                        case 1:
+                            Console.WriteLine("Not currently implemented");
+                            break;
+                        case 2:
+                            BreakoutBus.GetBus().RegisterEvent(new GameEvent
+                            {
+                                EventType = GameEventType.WindowEvent,
+                                Message = "CLOSE_WINDOW"
+                            });
+                            break;
+                        default:
+                            instance = null;
+                            BreakoutBus.GetBus().RegisterEvent(
+                            new GameEvent
+                            {
+                                EventType = GameEventType.GameStateEvent,
+                                Message = "CHANGE_STATE",
+                                StringArg1 = "GAME_RUNNING",
+                                StringArg2 = "RESET"
+                            });
+
+                            break;
+                    }
+                    break;
+                case KeyboardKey.Escape:
+                    BreakoutBus.GetBus().RegisterEvent(new GameEvent
+                    {
+                        EventType = GameEventType.WindowEvent,
+                        Message = "CLOSE_WINDOW"
+                    });
+                    break;
+
+                default:
+                    break;
+            }
         }
-    }
-
-    private void KeyPress(KeyboardKey key)
-    {
-        switch (key)
-        {
-            case KeyboardKey.Left:
-                GameEvent moveLeft = new GameEvent
-                {
-                    EventType = GameEventType.MovementEvent,
-                    Message = "MOVE_LEFT"
-                };
-                eventBus.RegisterEvent(moveLeft);
-                break;
-
-            case KeyboardKey.Right:
-                GameEvent moveRight = new GameEvent
-                {
-                    EventType = GameEventType.MovementEvent,
-                    Message = "MOVE_RIGHT"
-                };
-                eventBus.RegisterEvent(moveRight);
-                break;
-            default:
-                break;
-        }
-    }
-
-    private void KeyRelease(KeyboardKey key)
-    {
-        switch (key)
-        {
-            case KeyboardKey.Left:
-                GameEvent stopMoveLeft = new GameEvent
-                {
-                    EventType = GameEventType.MovementEvent,
-                    Message = "STOP_MOVE_LEFT"
-                };
-                eventBus.RegisterEvent(stopMoveLeft);
-                break;
-
-            case KeyboardKey.Right:
-                GameEvent stopMoveRight = new GameEvent
-                {
-                    EventType = GameEventType.MovementEvent,
-                    Message = "STOP_MOVE_RIGHT"
-                };
-                eventBus.RegisterEvent(stopMoveRight);
-                break;
-
-            case KeyboardKey.Escape:
-                BreakoutBus.GetBus().RegisterEvent(
-                        new GameEvent
-                        {
-                            EventType = GameEventType.GameStateEvent,
-                            Message = "CHANGE_STATE",
-                            StringArg1 = "GAME_PAUSED"
-                        });
-                break;
-
-            case KeyboardKey.Space:
-                ball.movementSwitch = true;
-                activeLevelIndex++;
-                // Below is for looping back to level 1 instead of returning to main menu:
-                // activeLevelIndex %= levels.Length;
-
-                // Reset level index and return to main menu if no more levels
-            
-                ResetState(); // Reset state to load the new level
-                break;
-
-            case KeyboardKey.Enter:
-                ball.movementSwitch = true;
-
-                break;
-
-            default:
-                break;
-        }
-    }
-
-    public void ResetLevel()
-    {
-        activeLevelIndex = 0;
     }
 
     public void RenderState()
     {
-        container.blocks.Iterate(block => { });
-        ballsContainer.Iterate(ball => { });
-        container.blocks.RenderEntities();
-        tokenContainer.tokens.RenderEntities();
-        player.Render();
-        foreach (Ball ball in ballsContainer) {
-        ball.Render();
+        for (int i = 0; i < menuButtons.Length; i++)
+        {
+            menuButtons[i].RenderText();
         }
-        
-        text.RenderText();
+        GameOverText.RenderText();
     }
-
 
     public void ResetState()
     {
-        eventBus = BreakoutBus.GetBus();
+        backGroundImage = new Entity(new DynamicShape(new Vec2F(0.0f, 0.0f), new Vec2F(1.0f, 1.0f)),
+        new Image(Path.Combine(workingDirectory, "..", "Breakout", "Assets", "Images", "shipit_titlescreen.png")));
 
-        levelPath = Path.Combine(workingDirectory, "..", "Breakout", "Assets", "Levels");
-        levels = Directory.GetFiles(levelPath);
-
-        Console.WriteLine($"Loading file: {levels[activeLevelIndex]} ...");
-
-        activeLevel = levels[activeLevelIndex];
-
-        // levelName = "level1"; // should be changed so you can change levels dynamically.
-        // levelPath = Path.Combine("Assets", "Levels", activeLevel + ".txt");
-        levelData = levelLoader.ReadLevelFile(activeLevel);
-
-        if (levelData == null)
-        {
-            Console.Error.WriteLine($"Error reading level file, please read above error message. Aborting run...");
-            GameEvent exitGame = new GameEvent
-            {
-                EventType = GameEventType.WindowEvent,
-                Message = "CLOSE_WINDOW"
-            };
-            eventBus.RegisterEvent(exitGame);
-            return;
-        }
-        container.blocks.Iterate(block =>
-        {
-            block.DeleteEntity();
-        });
-        container.CreateBlocks(levelData);
-
-        player = new Player(
-            new DynamicShape(new Vec2F(0.4f, 0.025f), new Vec2F(0.2f, 0.025f)),
-            new Image(Path.Combine(workingDirectory, "..", "Breakout", "Assets", "Images", "player.png")));
-        ballsContainer.Iterate(ball =>
-        {
-            ball.DeleteEntity();
-        });
-        ball = new Ball(
-            new DynamicShape(new Vec2F(0.5f, 0.05f), new Vec2F(0.05f, 0.05f)),
-            new Image(Path.Combine("Assets", "Images", "ball.png")));
-        ballsContainer.AddEntity(ball);
-        eventBus.Subscribe(GameEventType.MovementEvent, player);
-        eventBus.Subscribe(GameEventType.StatusEvent, tokenContainer);
-        text = new Text("Lives:", livesTextPosition1, livesTextPosition2);
-        text . SetColor(new Vec4F(1.0f, 1.0f, 1.0f, 1.0f));
-        text.RenderText();
-        
+        menuButtons[0] = new("[NEW GAME]", new Vec2F(0.1f, 0.28f), new Vec2F(0.4f, 0.4f));
+        menuButtons[0].SetColor(System.Drawing.Color.HotPink);
+        menuButtons[1] = new("[LVL SELECT]", new Vec2F(0.1f, 0.18f), new Vec2F(0.4f, 0.4f));
+        menuButtons[1].SetColor(System.Drawing.Color.White);
+        menuButtons[2] = new("[QUIT]", new Vec2F(0.1f, 0.008f), new Vec2F(0.4f, 0.4f));
+        menuButtons[2].SetColor(System.Drawing.Color.White);
+        GameOverText = new Text("Game Over", GameOverTextPosition1, GameOverTextPosition2);
+        GameOverText.SetColor(new Vec4F(1.0f, 1.0f, 1.0f, 1.0f));
     }
 
     public void UpdateState()
     {
-        eventBus.ProcessEventsSequentially();
-        player.Move();
-
-        foreach (Ball ball in ballsContainer) {
-        ball.Move();
-        ball.UpdateDirection();
-        }
-        ballsContainer.Iterate(ball => {});
-        if (ballsContainer.CountEntities() == 0) { 
-            player.Lives -=1 ; 
-            }
-        text.SetText($"Lives: {player.Lives}");
-
-
-        foreach (Ball ball in ballsContainer) {
-        Console.WriteLine(ball.IsDeleted());
-        }
-        
-        tokenContainer.tokens.Iterate(token =>
-        {
-            token.Move();
-            if (token.Position.Y < 0.0f)
-            {
-                token.DeleteEntity();
-            }
-        });
-        CollisionHandler.HandleCollisions(container.blocks, ballsContainer, player, tokenContainer.tokens);
     }
 }

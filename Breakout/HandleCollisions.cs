@@ -9,6 +9,7 @@ using DIKUArcade.Physics;
 using System;
 using DIKUArcade.Entities;
 namespace Breakout;
+/// <summary>Checks for collisions between every block, ball, player and token.</summary>
 
 public static class CollisionHandler
 {

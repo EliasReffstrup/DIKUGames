@@ -14,7 +14,7 @@ using DIKUArcade.Events;
 using DIKUArcade.State;
 using Breakout.GameState;
 using Breakout;
-
+/// <summary>Class for the StateMachine for when the game is running.</summary>
 public class GameRunning : IGameState
 {
     private string workingDirectory = DIKUArcade.Utilities.FileIO.GetProjectPath(); // to make testing work
@@ -175,8 +175,9 @@ public class GameRunning : IGameState
         container.blocks.RenderEntities();
         tokenContainer.tokens.RenderEntities();
         player.Render();
-        foreach (Ball ball in ballsContainer) {
-        ball.Render();
+        foreach (Ball ball in ballsContainer)
+        {
+            ball.Render();
         }
 
         livesAndTimeText.RenderText();
@@ -235,14 +236,15 @@ public class GameRunning : IGameState
         livesAndTimeText.ScaleText(0.5f);
         livesAndTimeText.RenderText();
 
-        
+
         levelTimeExists = levelData.MetaDictionary.ContainsKey("Time");
-        
-        if (levelTimeExists) {
+
+        if (levelTimeExists)
+        {
             timeOfLevel = levelData.MetaDictionary["Time"];
         }
-        
-        initialTime = DIKUArcade.Timers.StaticTimer.GetElapsedMilliseconds(); 
+
+        initialTime = DIKUArcade.Timers.StaticTimer.GetElapsedMilliseconds();
     }
 
     public void UpdateState()
@@ -250,17 +252,20 @@ public class GameRunning : IGameState
         eventBus.ProcessEventsSequentially();
         player.Move();
 
-        foreach (Ball ball in ballsContainer) {
-        ball.Move();
-        ball.UpdateDirection();
+        foreach (Ball ball in ballsContainer)
+        {
+            ball.Move();
+            ball.UpdateDirection();
         }
-        ballsContainer.Iterate(ball => {});
-        
-        if (ballsContainer.CountEntities() == 0 && player.Lives != 0) { 
-            player.Lives -=1 ; 
+        ballsContainer.Iterate(ball => { });
+
+        if (ballsContainer.CountEntities() == 0 && player.Lives != 0)
+        {
+            player.Lives -= 1;
         }
-        
-        if (player.Lives == 0) {
+
+        if (player.Lives == 0)
+        {
             BreakoutBus.GetBus().RegisterEvent(
             new GameEvent
             {
@@ -269,8 +274,10 @@ public class GameRunning : IGameState
                 StringArg1 = "GAME_OVER"
             });
         }
-        if (levelTimeExists){
-            if ( long.Parse(timeOfLevel) - timeElapsed < 1 ) {
+        if (levelTimeExists)
+        {
+            if (long.Parse(timeOfLevel) - timeElapsed < 1)
+            {
                 BreakoutBus.GetBus().RegisterEvent(
                 new GameEvent
                 {
@@ -281,17 +288,20 @@ public class GameRunning : IGameState
             }
         }
 
-        if (levelTimeExists) {
+        if (levelTimeExists)
+        {
             livesAndTimeText.SetFontSize(10);
-            livesAndTimeText.SetText($"Lives:{player.Lives}Time:{long.Parse(timeOfLevel)- timeElapsed}");
-        } else {
+            livesAndTimeText.SetText($"Lives:{player.Lives}Time:{long.Parse(timeOfLevel) - timeElapsed}");
+        }
+        else
+        {
             livesAndTimeText.SetFontSize(10);
             livesAndTimeText.SetText($"Lives: {player.Lives}");
-            
+
         }
-        timeElapsed = (DIKUArcade.Timers.StaticTimer.GetElapsedMilliseconds() - initialTime) / 1000; 
-        
-        
+        timeElapsed = (DIKUArcade.Timers.StaticTimer.GetElapsedMilliseconds() - initialTime) / 1000;
+
+
 
         tokenContainer.tokens.Iterate(token =>
         {

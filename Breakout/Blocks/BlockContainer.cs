@@ -7,7 +7,8 @@ using Breakout.LevelLoading;
 using DIKUArcade.Entities;
 using DIKUArcade.Graphics;
 using DIKUArcade.Math;
-
+/// <summary>The container for all blocks, that manages them as well as spawns 
+///them in when a level loads</summary>
 public class BlockContainer
 {
     private string workingDirectory = DIKUArcade.Utilities.FileIO.GetProjectPath(); // to make testing work

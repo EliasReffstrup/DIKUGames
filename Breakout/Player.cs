@@ -3,6 +3,7 @@ using DIKUArcade.Entities;
 using DIKUArcade.Events;
 using DIKUArcade.Graphics;
 using DIKUArcade.Math;
+/// <summary>Class for the player, storing all of it's values</summary>
 
 public class Player : IGameEventProcessor
 {
@@ -12,7 +13,7 @@ public class Player : IGameEventProcessor
     public const float MOVEMENT_SPEED = 0.013f;
     private float speedMod = 1.0f;
     private DynamicShape dynamicShape;
-    private int lives = 1;
+    private int lives = 2;
 
     public Player(DynamicShape shape, IBaseImage image)
     {

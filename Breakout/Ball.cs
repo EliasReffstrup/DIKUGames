@@ -10,7 +10,7 @@ using DIKUArcade.Events;
 using DIKUArcade.Physics;
 using System;
 using DIKUArcade.Math;
-
+/// <summary>Class for the in-game ball, storing all of it's values</summary>
 public class Ball : Entity
 {
     public Entity entity;

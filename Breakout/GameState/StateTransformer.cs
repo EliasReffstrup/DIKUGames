@@ -1,8 +1,11 @@
 namespace Breakout.GameState;
-
-public class StateTransformer {
-    static public GameStateType TransformStringToState(string state) {
-        switch (state) {
+/// <summary>Handles switching between classes, used by the StateMachine.</summary>
+public class StateTransformer
+{
+    static public GameStateType TransformStringToState(string state)
+    {
+        switch (state)
+        {
             case "GAME_RUNNING":
                 return GameStateType.GameRunning;
             case "GAME_PAUSED":
@@ -10,13 +13,15 @@ public class StateTransformer {
             case "MAIN_MENU":
                 return GameStateType.MainMenu;
             case "GAME_OVER":
-            return GameStateType.GameOver;
+                return GameStateType.GameOver;
             default:
                 throw new ArgumentException("INVALID STATE");
         }
     }
-    static public string TransformStateToString(GameStateType state) {
-        switch (state) {
+    static public string TransformStateToString(GameStateType state)
+    {
+        switch (state)
+        {
             case GameStateType.GameRunning:
                 return "GAME_RUNNING";
             case GameStateType.GamePaused:
