@@ -303,8 +303,6 @@ public class GameRunning : IGameState
         }
 
         timeElapsed = (DIKUArcade.Timers.StaticTimer.GetElapsedMilliseconds() - initialTime) / 1000; 
-        
-
 
         tokenContainer.tokens.Iterate(token =>
         {
