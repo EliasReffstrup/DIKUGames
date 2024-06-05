@@ -281,15 +281,18 @@ public class GameRunning : IGameState
         }
 
         if (container.blocks.CountEntities() <= 0) {
-            BreakoutBus.GetBus().RegisterEvent(
-            new GameEvent
-            {
-                EventType = GameEventType.GameStateEvent,
-                Message = "CHANGE_STATE",
-                StringArg1 = "GAME_WON"
-            });
+            activeLevelIndex++;
+            ResetState();
+                if (activeLevelIndex >= levels.Length-1){
+                    BreakoutBus.GetBus().RegisterEvent(
+                        new GameEvent
+                        {
+                            EventType = GameEventType.GameStateEvent,
+                            Message = "CHANGE_STATE",
+                            StringArg1 = "GAME_WON"
+                        });
+                }
         }
-        
 
         if (levelTimeExists) {
             livesAndTimeText.SetText($"Lives:{player.Lives}Time:{long.Parse(timeOfLevel)- timeElapsed}");
