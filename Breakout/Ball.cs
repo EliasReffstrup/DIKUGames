@@ -65,7 +65,7 @@ public class Ball : Entity
 
         if (shape.Position.Y < 0.0)
         {
-            DeleteEntity();
+            base.DeleteEntity();
         }
 
         if (shape.Position.X > 0.95f || shape.Position.X < 0.00f)
@@ -79,5 +79,8 @@ public class Ball : Entity
         }
     }
     public Vec2F GetPosition() => shape.Position;
-
+    
+    public void SetPosition(Vec2F newposition) { 
+    shape.Position = newposition;
+    }
 }
