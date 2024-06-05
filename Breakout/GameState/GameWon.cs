@@ -7,33 +7,30 @@ using DIKUArcade.Entities;
 using DIKUArcade.Graphics;
 using DIKUArcade.Math;
 using DIKUArcade.Events;
-/// <summary>Class for the StateMachine for the title screen.</summary>
-public class MainMenu : IGameState
-{
+
+public class GameWon : IGameState {
     private string workingDirectory = DIKUArcade.Utilities.FileIO.GetProjectPath(); // to make testing work
 
-    private static MainMenu instance = null;
+    private static GameWon instance = null;
     private Entity backGroundImage;
     private Text[] menuButtons = new Text[3];
     private int activeMenuButton = 0;
     private int maxMenuButtons = 3;
+    public Text GameOverText;
+    public Vec2F GameOverTextPosition1 = new Vec2F(0.2f, 0.5f);
+    public Vec2F GameOverTextPosition2 = new Vec2F(0.8f, 0.5f);
 
-    public static MainMenu GetInstance()
-    {
-        if (instance == null)
-        {
-            MainMenu.instance = new MainMenu();
-            MainMenu.instance.ResetState();
+    public static GameWon GetInstance() {
+        if (instance == null) {
+            GameWon.instance = new GameWon();
+            GameWon.instance.ResetState();
         }
-        return MainMenu.instance;
+        return GameWon.instance;
     }
 
-    public void HandleKeyEvent(KeyboardAction action, KeyboardKey key)
-    {
-        if (action == KeyboardAction.KeyRelease)
-        {
-            switch (key)
-            {
+    public void HandleKeyEvent(KeyboardAction action, KeyboardKey key) {
+        if (action == KeyboardAction.KeyRelease) {
+            switch (key) {
                 case KeyboardKey.Down:
                     menuButtons[activeMenuButton].SetColor(System.Drawing.Color.White);
                     activeMenuButton++;
@@ -49,11 +46,9 @@ public class MainMenu : IGameState
                     menuButtons[activeMenuButton].SetColor(System.Drawing.Color.HotPink);
                     break;
                 case KeyboardKey.Enter:
-                    switch (activeMenuButton)
-                    {
+                    switch (activeMenuButton) {
                         case 0:
-                            BreakoutBus.GetBus().RegisterEvent(new GameEvent
-                            {
+                            BreakoutBus.GetBus().RegisterEvent(new GameEvent {
                                 EventType = GameEventType.GameStateEvent,
                                 Message = "CHANGE_STATE",
                                 StringArg1 = "GAME_RUNNING",
@@ -65,8 +60,7 @@ public class MainMenu : IGameState
                             Console.WriteLine("Not currently implemented");
                             break;
                         case 2:
-                            BreakoutBus.GetBus().RegisterEvent(new GameEvent
-                            {
+                            BreakoutBus.GetBus().RegisterEvent(new GameEvent {
                                 EventType = GameEventType.WindowEvent,
                                 Message = "CLOSE_WINDOW"
                             });
@@ -74,20 +68,18 @@ public class MainMenu : IGameState
                         default:
                             instance = null;
                             BreakoutBus.GetBus().RegisterEvent(
-                            new GameEvent
-                            {
+                            new GameEvent {
                                 EventType = GameEventType.GameStateEvent,
                                 Message = "CHANGE_STATE",
                                 StringArg1 = "GAME_RUNNING",
                                 StringArg2 = "RESET"
                             });
-
+                            
                             break;
                     }
                     break;
                 case KeyboardKey.Escape:
-                    BreakoutBus.GetBus().RegisterEvent(new GameEvent
-                    {
+                    BreakoutBus.GetBus().RegisterEvent(new GameEvent {
                         EventType = GameEventType.WindowEvent,
                         Message = "CLOSE_WINDOW"
                     });
@@ -99,19 +91,16 @@ public class MainMenu : IGameState
         }
     }
 
-    public void RenderState()
-    {
-        backGroundImage.RenderEntity();
-        for (int i = 0; i < menuButtons.Length; i++)
-        {
+    public void RenderState() {
+        for (int i = 0; i < menuButtons.Length; i++) {
             menuButtons[i].RenderText();
         }
+        GameOverText.RenderText();
     }
 
-    public void ResetState()
-    {
+    public void ResetState() {
         backGroundImage = new Entity(new DynamicShape(new Vec2F(0.0f, 0.0f), new Vec2F(1.0f, 1.0f)),
-        new Image(Path.Combine(workingDirectory, "..", "Breakout", "Assets", "Images", "shipit_titlescreen.png")));
+        new Image(Path.Combine(workingDirectory,"..", "Breakout", "Assets", "Images", "shipit_titlescreen.png")));
 
         menuButtons[0] = new("[NEW GAME]", new Vec2F(0.1f, 0.28f), new Vec2F(0.4f, 0.4f));
         menuButtons[0].SetColor(System.Drawing.Color.HotPink);
@@ -119,9 +108,10 @@ public class MainMenu : IGameState
         menuButtons[1].SetColor(System.Drawing.Color.White);
         menuButtons[2] = new("[QUIT]", new Vec2F(0.1f, 0.008f), new Vec2F(0.4f, 0.4f));
         menuButtons[2].SetColor(System.Drawing.Color.White);
+        GameOverText = new Text("Game Won", GameOverTextPosition1, GameOverTextPosition2);
+        GameOverText.SetColor(new Vec4F(1.0f, 1.0f, 1.0f, 1.0f));
     }
 
-    public void UpdateState()
-    {
+    public void UpdateState() {
     }
 }

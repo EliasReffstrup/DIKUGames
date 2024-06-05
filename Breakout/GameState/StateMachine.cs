@@ -29,6 +29,12 @@ public class StateMachine : IGameEventProcessor
             case GameStateType.GameRunning:
                 ActiveState = GameRunning.GetInstance();
                 break;
+            case GameStateType.GameOver:
+                ActiveState = GameOver.GetInstance();
+                break;
+            case GameStateType.GameWon:
+                ActiveState = GameWon.GetInstance();
+                break;
             default:
                 throw new ArgumentException("No valid state");
         }

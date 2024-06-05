@@ -4,5 +4,6 @@ public enum GameStateType {
     GameRunning,
     GamePaused,
     MainMenu,
-    GameOver
+    GameOver,
+    GameWon
 }

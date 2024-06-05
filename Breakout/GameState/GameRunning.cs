@@ -37,12 +37,8 @@ public class GameRunning : IGameState
     public Ball ball;
     public TokenContainer tokenContainer = new TokenContainer();
     public Text livesAndTimeText;
-    public Text timeLeftText;
     public Vec2F livesTextPosition1 = new Vec2F(0.1f, 0.5f);
     public Vec2F livesTextPosition2 = new Vec2F(0.9f, 0.5f);
-    public Vec2F timeLeftTextPosition1 = new Vec2F(0.5f, 0.5f);
-    public Vec2F timeLeftTextPosition2 = new Vec2F(0.4f, 0.5f);
-
     public long initialTime;
     public long timeElapsed;
     public bool levelTimeExists;
@@ -214,6 +210,7 @@ public class GameRunning : IGameState
         {
             block.DeleteEntity();
         });
+        
         container.CreateBlocks(levelData);
 
         player = new Player(
@@ -231,9 +228,7 @@ public class GameRunning : IGameState
         eventBus.Subscribe(GameEventType.StatusEvent, tokenContainer);
 
         livesAndTimeText = new Text("Lives:", livesTextPosition1, livesTextPosition2);
-        timeLeftText = new Text("Time:", timeLeftTextPosition1, timeLeftTextPosition2);
         livesAndTimeText.SetColor(new Vec4F(1.0f, 1.0f, 1.0f, 1.0f));
-        livesAndTimeText.ScaleText(0.5f);
         livesAndTimeText.RenderText();
 
 
@@ -257,15 +252,18 @@ public class GameRunning : IGameState
             ball.Move();
             ball.UpdateDirection();
         }
-        ballsContainer.Iterate(ball => { });
 
-        if (ballsContainer.CountEntities() == 0 && player.Lives != 0)
-        {
-            player.Lives -= 1;
+        ballsContainer.Iterate(ball => {});
+        
+        if (ballsContainer.CountEntities() == 0 && player.Lives != 0) { 
+            player.Lives -=1 ; 
+            ball = new Ball(
+            new DynamicShape(new Vec2F(0.5f, 0.05f), new Vec2F(0.05f, 0.05f)),
+            new Image(Path.Combine("Assets", "Images", "ball.png")));
+            ballsContainer.AddEntity(ball);
         }
-
-        if (player.Lives == 0)
-        {
+    
+        if (player.Lives == 0) {
             BreakoutBus.GetBus().RegisterEvent(
             new GameEvent
             {
@@ -288,19 +286,32 @@ public class GameRunning : IGameState
             }
         }
 
-        if (levelTimeExists)
-        {
-            livesAndTimeText.SetFontSize(10);
-            livesAndTimeText.SetText($"Lives:{player.Lives}Time:{long.Parse(timeOfLevel) - timeElapsed}");
+
+        if (container.blocks.CountEntities() <= 0) {
+                if (activeLevelIndex >= levels.Length-1){
+                    BreakoutBus.GetBus().RegisterEvent(
+                        new GameEvent
+                        {
+                            EventType = GameEventType.GameStateEvent,
+                            Message = "CHANGE_STATE",
+                            StringArg1 = "GAME_WON"
+                        });
+                } else {
+                    activeLevelIndex++;
+                    ResetState();
+                    }
+
         }
-        else
-        {
-            livesAndTimeText.SetFontSize(10);
+
+        if (levelTimeExists) {
+            livesAndTimeText.SetText($"Lives:{player.Lives}Time:{long.Parse(timeOfLevel)- timeElapsed}");
+        } else {
             livesAndTimeText.SetText($"Lives: {player.Lives}");
 
         }
-        timeElapsed = (DIKUArcade.Timers.StaticTimer.GetElapsedMilliseconds() - initialTime) / 1000;
 
+        timeElapsed = (DIKUArcade.Timers.StaticTimer.GetElapsedMilliseconds() - initialTime) / 1000; 
+        
 
 
         tokenContainer.tokens.Iterate(token =>
@@ -311,6 +322,7 @@ public class GameRunning : IGameState
                 token.DeleteEntity();
             }
         });
+        
         CollisionHandler.HandleCollisions(container.blocks, ballsContainer, player, tokenContainer.tokens);
     }
 }
