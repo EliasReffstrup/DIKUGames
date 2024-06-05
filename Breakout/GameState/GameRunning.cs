@@ -15,18 +15,14 @@ using DIKUArcade.State;
 public class GameRunning : IGameState
 {
     private string workingDirectory = DIKUArcade.Utilities.FileIO.GetProjectPath(); // to make testing work
-
     private static GameRunning instance = null;
     private GameEventBus eventBus;
-
     private LevelData levelData;
     private LoadLevel levelLoader = new LoadLevel();
-
     private string[] levels; // All levels you may want to load
     private string activeLevel; // Current active level
     private int activeLevelIndex = 0; // Index of the current level in the levels array
     private string levelPath;
-
 
     public BlockContainer container = new BlockContainer();
     public Player player;
@@ -158,7 +154,6 @@ public class GameRunning : IGameState
     {
         activeLevelIndex = 0;
     }
-
     public void RenderState()
     {
         container.blocks.Iterate(block => { });
@@ -173,7 +168,6 @@ public class GameRunning : IGameState
 
         livesAndTimeText.RenderText();
     }
-
 
     public void ResetState()
     {
