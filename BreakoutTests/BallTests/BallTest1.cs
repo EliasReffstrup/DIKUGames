@@ -53,9 +53,9 @@ public class BallTests {
 
     [Test]
     public void BallGetsDeletedTest() {
-        ball.shape.Position = new Vec2F(0.0f, -0.1f);
+        ball.shape.Position = new Vec2F(-0.3f, -0.3f);
         ball.Move();
-        Assert.IsTrue(ball.entity.IsDeleted());
+        Assert.IsTrue(ball.IsDeleted());
     }
 
     [Test]
@@ -76,8 +76,6 @@ public class BallTests {
         block.Hit();
         Assert.IsTrue(block.IsDeleted());
     }
-
-
 
     [Test]
     public void TestBallLaunchesUpwards() {
