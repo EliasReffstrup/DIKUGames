@@ -54,6 +54,7 @@ public class GameOver : IGameState {
                                 StringArg1 = "GAME_RUNNING",
                                 StringArg2 = "RESET"
                             });
+                            GameRunning.GetInstance().ResetLevel();
                             break;
                         case 1:
                             Console.WriteLine("Not currently implemented");
