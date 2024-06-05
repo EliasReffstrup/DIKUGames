@@ -281,8 +281,6 @@ public class GameRunning : IGameState
         }
 
         if (container.blocks.CountEntities() <= 0) {
-            activeLevelIndex++;
-            ResetState();
                 if (activeLevelIndex >= levels.Length-1){
                     BreakoutBus.GetBus().RegisterEvent(
                         new GameEvent
@@ -291,7 +289,11 @@ public class GameRunning : IGameState
                             Message = "CHANGE_STATE",
                             StringArg1 = "GAME_WON"
                         });
-                }
+                } else {
+                    activeLevelIndex++;
+                    ResetState();
+                    }
+
         }
 
         if (levelTimeExists) {
