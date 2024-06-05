@@ -10,7 +10,7 @@ public class StateTransformer {
             case "MAIN_MENU":
                 return GameStateType.MainMenu;
             case "GAME_OVER":
-            return GameStateType.MainMenu;
+            return GameStateType.GameOver;
             default:
                 throw new ArgumentException("INVALID STATE");
         }

@@ -46,7 +46,7 @@ public class GameRunning : IGameState
     public long initialTime;
     public long timeElapsed;
     public bool levelTimeExists;
-    public long timeLeft;
+    public string? timeOfLevel;
     public static GameRunning GetInstance()
     {
         if (instance == null)
@@ -230,13 +230,18 @@ public class GameRunning : IGameState
         eventBus.Subscribe(GameEventType.StatusEvent, tokenContainer);
 
         livesAndTimeText = new Text("Lives:", livesTextPosition1, livesTextPosition2);
-        timeLeftText = new Text("Time Left:", timeLeftTextPosition1, timeLeftTextPosition2);
+        timeLeftText = new Text("Time:", timeLeftTextPosition1, timeLeftTextPosition2);
         livesAndTimeText.SetColor(new Vec4F(1.0f, 1.0f, 1.0f, 1.0f));
         livesAndTimeText.ScaleText(0.5f);
         livesAndTimeText.RenderText();
 
-        string timeLeft = levelData.GetLevelTime();
-        levelTimeExists = timeLeft != null ? true : false;
+        
+        levelTimeExists = levelData.MetaDictionary.ContainsKey("Time");
+        
+        if (levelTimeExists) {
+            timeOfLevel = levelData.MetaDictionary["Time"];
+        }
+        
         initialTime = DIKUArcade.Timers.StaticTimer.GetElapsedMilliseconds(); 
     }
 
@@ -254,6 +259,7 @@ public class GameRunning : IGameState
         if (ballsContainer.CountEntities() == 0 && player.Lives != 0) { 
             player.Lives -=1 ; 
         }
+        
         if (player.Lives == 0) {
             BreakoutBus.GetBus().RegisterEvent(
             new GameEvent
@@ -263,19 +269,29 @@ public class GameRunning : IGameState
                 StringArg1 = "GAME_OVER"
             });
         }
-
+        if (levelTimeExists){
+            if ( long.Parse(timeOfLevel) - timeElapsed < 1 ) {
+                BreakoutBus.GetBus().RegisterEvent(
+                new GameEvent
+                {
+                    EventType = GameEventType.GameStateEvent,
+                    Message = "CHANGE_STATE",
+                    StringArg1 = "GAME_OVER"
+                });
+            }
+        }
 
         if (levelTimeExists) {
             livesAndTimeText.SetFontSize(10);
-            livesAndTimeText.SetText($"Lives: {player.Lives}  Time Left: {timeLeft - timeElapsed}");
+            livesAndTimeText.SetText($"Lives:{player.Lives}Time:{long.Parse(timeOfLevel)- timeElapsed}");
         } else {
             livesAndTimeText.SetFontSize(10);
             livesAndTimeText.SetText($"Lives: {player.Lives}");
             
         }
-
         timeElapsed = (DIKUArcade.Timers.StaticTimer.GetElapsedMilliseconds() - initialTime) / 1000; 
-        Console.WriteLine(timeElapsed);
+        
+        
 
         tokenContainer.tokens.Iterate(token =>
         {
