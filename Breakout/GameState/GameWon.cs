@@ -8,10 +8,10 @@ using DIKUArcade.Graphics;
 using DIKUArcade.Math;
 using DIKUArcade.Events;
 
-public class GameOver : IGameState {
+public class GameWon : IGameState {
     private string workingDirectory = DIKUArcade.Utilities.FileIO.GetProjectPath(); // to make testing work
 
-    private static GameOver instance = null;
+    private static GameWon instance = null;
     private Entity backGroundImage;
     private Text[] menuButtons = new Text[3];
     private int activeMenuButton = 0;
@@ -20,12 +20,12 @@ public class GameOver : IGameState {
     public Vec2F GameOverTextPosition1 = new Vec2F(0.2f, 0.5f);
     public Vec2F GameOverTextPosition2 = new Vec2F(0.8f, 0.5f);
 
-    public static GameOver GetInstance() {
+    public static GameWon GetInstance() {
         if (instance == null) {
-            GameOver.instance = new GameOver();
-            GameOver.instance.ResetState();
+            GameWon.instance = new GameWon();
+            GameWon.instance.ResetState();
         }
-        return GameOver.instance;
+        return GameWon.instance;
     }
 
     public void HandleKeyEvent(KeyboardAction action, KeyboardKey key) {
@@ -107,7 +107,7 @@ public class GameOver : IGameState {
         menuButtons[1].SetColor(System.Drawing.Color.White);
         menuButtons[2] = new("[QUIT]", new Vec2F(0.1f, 0.008f), new Vec2F(0.4f, 0.4f));
         menuButtons[2].SetColor(System.Drawing.Color.White);
-        GameOverText = new Text("Game Over", GameOverTextPosition1, GameOverTextPosition2);
+        GameOverText = new Text("Game Won", GameOverTextPosition1, GameOverTextPosition2);
         GameOverText.SetColor(new Vec4F(1.0f, 1.0f, 1.0f, 1.0f));
     }
 

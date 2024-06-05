@@ -213,6 +213,7 @@ public class GameRunning : IGameState
         {
             block.DeleteEntity();
         });
+        
         container.CreateBlocks(levelData);
 
         player = new Player(
@@ -281,6 +282,17 @@ public class GameRunning : IGameState
             }
         }
 
+        if (container.blocks.CountEntities() <= 0) {
+            BreakoutBus.GetBus().RegisterEvent(
+            new GameEvent
+            {
+                EventType = GameEventType.GameStateEvent,
+                Message = "CHANGE_STATE",
+                StringArg1 = "GAME_WON"
+            });
+        }
+        
+
         if (levelTimeExists) {
             livesAndTimeText.SetFontSize(10);
             livesAndTimeText.SetText($"Lives:{player.Lives}Time:{long.Parse(timeOfLevel)- timeElapsed}");
@@ -290,7 +302,6 @@ public class GameRunning : IGameState
             
         }
         timeElapsed = (DIKUArcade.Timers.StaticTimer.GetElapsedMilliseconds() - initialTime) / 1000; 
-        
         
 
         tokenContainer.tokens.Iterate(token =>
