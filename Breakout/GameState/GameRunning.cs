@@ -246,6 +246,9 @@ public class GameRunning : IGameState
         {
             ball.Move();
             ball.UpdateDirection();
+            if (ball.movementSwitch == false) {
+                ball.SetPosition(new Vec2F(player.GetPosition().X+0.08f, player.GetPosition().Y+0.045f));
+            }
         }
 
         ballsContainer.Iterate(ball => {});
