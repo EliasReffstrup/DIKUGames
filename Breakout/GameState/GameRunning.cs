@@ -1,8 +1,6 @@
 namespace Breakout.GameState;
 
 using System;
-using DIKUArcade;
-using DIKUArcade.GUI;
 using Breakout;
 using DIKUArcade.Input;
 using LevelLoading;
@@ -12,8 +10,7 @@ using DIKUArcade.Graphics;
 using DIKUArcade.Math;
 using DIKUArcade.Events;
 using DIKUArcade.State;
-using Breakout.GameState;
-using Breakout;
+
 /// <summary>Class for the StateMachine for when the game is running.</summary>
 public class GameRunning : IGameState
 {
@@ -126,12 +123,10 @@ public class GameRunning : IGameState
                         });
                 break;
 
-            case KeyboardKey.Space:
-                ball.movementSwitch = true;
-                activeLevelIndex++;
+            case KeyboardKey.Enter:
                 // Below is for looping back to level 1 instead of returning to main menu:
                 // activeLevelIndex %= levels.Length;
-
+                activeLevelIndex++;
                 // Reset level index and return to main menu if no more levels
                 if (activeLevelIndex >= levels.Length)
                 {
@@ -148,8 +143,8 @@ public class GameRunning : IGameState
                 }
                 ResetState(); // Reset state to load the new level
                 break;
-
-            case KeyboardKey.Enter:
+                
+            case KeyboardKey.Space:
                 ball.movementSwitch = true;
 
                 break;
