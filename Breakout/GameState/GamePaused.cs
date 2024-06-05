@@ -7,14 +7,17 @@ using DIKUArcade.Entities;
 using DIKUArcade.Graphics;
 using DIKUArcade.Math;
 using DIKUArcade.Events;
-
-public class GamePaused : IGameState {
+/// <summary>Class for the StateMachine for when the game is paused.</summary>
+public class GamePaused : IGameState
+{
     private static GamePaused instance = null;
     private Text[] menuButtons = new Text[2];
     private int activeMenuButton = 0;
     private int maxMenuButtons = 2;
-    public static GamePaused GetInstance() {
-        if (GamePaused.instance == null) {
+    public static GamePaused GetInstance()
+    {
+        if (GamePaused.instance == null)
+        {
             GamePaused.instance = new GamePaused();
             GamePaused.instance.ResetState();
         }
@@ -22,9 +25,12 @@ public class GamePaused : IGameState {
         return GamePaused.instance;
     }
 
-   public void HandleKeyEvent(KeyboardAction action, KeyboardKey key) {
-        if (action == KeyboardAction.KeyRelease) {
-            switch (key) {
+    public void HandleKeyEvent(KeyboardAction action, KeyboardKey key)
+    {
+        if (action == KeyboardAction.KeyRelease)
+        {
+            switch (key)
+            {
                 case KeyboardKey.Down:
                     menuButtons[activeMenuButton].SetColor(System.Drawing.Color.White);
                     activeMenuButton++;
@@ -40,18 +46,23 @@ public class GamePaused : IGameState {
                     menuButtons[activeMenuButton].SetColor(System.Drawing.Color.Yellow);
                     break;
                 case KeyboardKey.Enter:
-                    if (activeMenuButton == 1) {
-                        BreakoutBus.GetBus().RegisterEvent(new GameEvent {
+                    if (activeMenuButton == 1)
+                    {
+                        BreakoutBus.GetBus().RegisterEvent(new GameEvent
+                        {
                             EventType = GameEventType.GameStateEvent,
                             Message = "CHANGE_STATE",
                             StringArg1 = "MAIN_MENU",
                             StringArg2 = "RESET"
                         });
-                        
-                    } else {
+
+                    }
+                    else
+                    {
                         instance = null;
                         BreakoutBus.GetBus().RegisterEvent(
-                        new GameEvent {
+                        new GameEvent
+                        {
                             EventType = GameEventType.GameStateEvent,
                             Message = "CHANGE_STATE",
                             StringArg1 = "GAME_RUNNING"
@@ -60,7 +71,8 @@ public class GamePaused : IGameState {
                     }
                     break;
                 case KeyboardKey.Escape:
-                    BreakoutBus.GetBus().RegisterEvent(new GameEvent {
+                    BreakoutBus.GetBus().RegisterEvent(new GameEvent
+                    {
                         EventType = GameEventType.GameStateEvent,
                         Message = "CHANGE_STATE",
                         StringArg1 = "GAME_RUNNING"
@@ -73,13 +85,16 @@ public class GamePaused : IGameState {
         }
     }
 
-    public void RenderState() {
-        for (int i = 0; i < menuButtons.Length; i++) {
+    public void RenderState()
+    {
+        for (int i = 0; i < menuButtons.Length; i++)
+        {
             menuButtons[i].RenderText();
         }
     }
 
-    public void ResetState() {
+    public void ResetState()
+    {
         menuButtons[0] = new("[CONTINUE]", new Vec2F(0.1f, 0.28f), new Vec2F(0.4f, 0.4f));
         menuButtons[0].SetColor(System.Drawing.Color.Yellow);
         menuButtons[1] = new("[MAIN MENU]", new Vec2F(0.1f, 0.18f), new Vec2F(0.4f, 0.4f));
@@ -88,7 +103,8 @@ public class GamePaused : IGameState {
 
     }
 
-    public void UpdateState() {
-        
+    public void UpdateState()
+    {
+
     }
 }

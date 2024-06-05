@@ -3,6 +3,7 @@ using DIKUArcade.Entities;
 using DIKUArcade.Events;
 using DIKUArcade.Graphics;
 using DIKUArcade.Math;
+/// <summary>Class for the player, storing all of it's values</summary>
 
 public class Player : IGameEventProcessor
 {

@@ -13,6 +13,7 @@ using DIKUArcade.Events;
 using DIKUArcade.State;
 using Breakout.GameState;
 
+/// <summary>The top-level class handling the entire game</summary>
 
 public class Game : DIKUGame, IGameEventProcessor
 {

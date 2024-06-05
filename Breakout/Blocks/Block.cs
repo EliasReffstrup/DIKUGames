@@ -5,7 +5,7 @@ using DIKUArcade.Entities;
 using DIKUArcade.Graphics;
 using DIKUArcade.Math;
 using DIKUArcade.Events;
-
+/// <summary>The block entity that makes up levels. Contained within the BlockContainer class</summary>
 public class Block : Entity
 {
     private string workingDirectory = DIKUArcade.Utilities.FileIO.GetProjectPath(); // to make testing work

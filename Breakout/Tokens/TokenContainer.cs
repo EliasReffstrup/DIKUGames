@@ -1,5 +1,4 @@
 namespace Breakout;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,6 +8,7 @@ using DIKUArcade.Graphics;
 using DIKUArcade.Math;
 using DIKUArcade.Events;
 
+/// <summary>Contains and manages the tokens (Power-ups & Hazards).</summary>
 public class TokenContainer : IGameEventProcessor
 {
     private string workingDirectory = DIKUArcade.Utilities.FileIO.GetProjectPath(); // to make testing work

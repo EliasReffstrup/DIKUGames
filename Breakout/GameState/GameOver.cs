@@ -8,7 +8,9 @@ using DIKUArcade.Graphics;
 using DIKUArcade.Math;
 using DIKUArcade.Events;
 
-public class GameOver : IGameState {
+/// <summary>Class for the StateMachine for when the game is over.</summary>
+public class GameOver : IGameState 
+{
     private string workingDirectory = DIKUArcade.Utilities.FileIO.GetProjectPath(); // to make testing work
 
     private static GameOver instance = null;
@@ -19,18 +21,25 @@ public class GameOver : IGameState {
     public Text GameOverText;
     public Vec2F GameOverTextPosition1 = new Vec2F(0.2f, 0.5f);
     public Vec2F GameOverTextPosition2 = new Vec2F(0.8f, 0.5f);
+    public static GameOver GetInstance()
+    {
+        if (instance == null)
+        {
 
-    public static GameOver GetInstance() {
-        if (instance == null) {
+
             GameOver.instance = new GameOver();
             GameOver.instance.ResetState();
         }
         return GameOver.instance;
     }
 
-    public void HandleKeyEvent(KeyboardAction action, KeyboardKey key) {
-        if (action == KeyboardAction.KeyRelease) {
-            switch (key) {
+    public void HandleKeyEvent(KeyboardAction action, KeyboardKey key)
+    {
+        if (action == KeyboardAction.KeyRelease)
+        {
+            switch (key)
+            {
+
                 case KeyboardKey.Down:
                     menuButtons[activeMenuButton].SetColor(System.Drawing.Color.White);
                     activeMenuButton++;
@@ -46,9 +55,13 @@ public class GameOver : IGameState {
                     menuButtons[activeMenuButton].SetColor(System.Drawing.Color.HotPink);
                     break;
                 case KeyboardKey.Enter:
-                    switch (activeMenuButton) {
+
+                    switch (activeMenuButton)
+                    {
                         case 0:
-                            BreakoutBus.GetBus().RegisterEvent(new GameEvent {
+                            BreakoutBus.GetBus().RegisterEvent(new GameEvent
+                            {
+
                                 EventType = GameEventType.GameStateEvent,
                                 Message = "CHANGE_STATE",
                                 StringArg1 = "GAME_RUNNING",
@@ -60,7 +73,9 @@ public class GameOver : IGameState {
                             Console.WriteLine("Not currently implemented");
                             break;
                         case 2:
-                            BreakoutBus.GetBus().RegisterEvent(new GameEvent {
+                            BreakoutBus.GetBus().RegisterEvent(new GameEvent
+                            {
+
                                 EventType = GameEventType.WindowEvent,
                                 Message = "CLOSE_WINDOW"
                             });
@@ -68,18 +83,22 @@ public class GameOver : IGameState {
                         default:
                             instance = null;
                             BreakoutBus.GetBus().RegisterEvent(
-                            new GameEvent {
+                            new GameEvent
+                            {
+
                                 EventType = GameEventType.GameStateEvent,
                                 Message = "CHANGE_STATE",
                                 StringArg1 = "GAME_RUNNING",
                                 StringArg2 = "RESET"
                             });
-                            
+
                             break;
                     }
                     break;
                 case KeyboardKey.Escape:
-                    BreakoutBus.GetBus().RegisterEvent(new GameEvent {
+                    BreakoutBus.GetBus().RegisterEvent(new GameEvent
+                    {
+
                         EventType = GameEventType.WindowEvent,
                         Message = "CLOSE_WINDOW"
                     });
@@ -91,16 +110,23 @@ public class GameOver : IGameState {
         }
     }
 
-    public void RenderState() {
-        for (int i = 0; i < menuButtons.Length; i++) {
+
+    public void RenderState()
+    {
+        for (int i = 0; i < menuButtons.Length; i++)
+        {
+
             menuButtons[i].RenderText();
         }
         GameOverText.RenderText();
     }
 
-    public void ResetState() {
+
+    public void ResetState()
+    {
         backGroundImage = new Entity(new DynamicShape(new Vec2F(0.0f, 0.0f), new Vec2F(1.0f, 1.0f)),
-        new Image(Path.Combine(workingDirectory,"..", "Breakout", "Assets", "Images", "shipit_titlescreen.png")));
+        new Image(Path.Combine(workingDirectory, "..", "Breakout", "Assets", "Images", "shipit_titlescreen.png")));
+
 
         menuButtons[0] = new("[NEW GAME]", new Vec2F(0.1f, 0.28f), new Vec2F(0.4f, 0.4f));
         menuButtons[0].SetColor(System.Drawing.Color.HotPink);
@@ -112,6 +138,9 @@ public class GameOver : IGameState {
         GameOverText.SetColor(new Vec4F(1.0f, 1.0f, 1.0f, 1.0f));
     }
 
-    public void UpdateState() {
+
+    public void UpdateState()
+    {
+
     }
 }
