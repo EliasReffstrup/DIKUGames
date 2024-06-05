@@ -253,8 +253,12 @@ public class GameRunning : IGameState
         
         if (ballsContainer.CountEntities() == 0 && player.Lives != 0) { 
             player.Lives -=1 ; 
+            ball = new Ball(
+            new DynamicShape(new Vec2F(0.5f, 0.05f), new Vec2F(0.05f, 0.05f)),
+            new Image(Path.Combine("Assets", "Images", "ball.png")));
+            ballsContainer.AddEntity(ball);
         }
-        
+    
         if (player.Lives == 0) {
             BreakoutBus.GetBus().RegisterEvent(
             new GameEvent
@@ -304,6 +308,7 @@ public class GameRunning : IGameState
                 token.DeleteEntity();
             }
         });
+        
         CollisionHandler.HandleCollisions(container.blocks, ballsContainer, player, tokenContainer.tokens);
     }
 }
